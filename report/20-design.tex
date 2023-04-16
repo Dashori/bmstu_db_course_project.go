@@ -5,7 +5,7 @@
 В базе данных будет существовать 5 сущностей и 6 таблиц, одна из которых является развязочной. 
 \begin{figure}[hbtp]
 	\centering
-	\includegraphics[width=150mm]{image/bd.pdf}
+	\includegraphics[width=170mm]{image/bd.pdf}
 	\caption{Диаграмма проектируемой базы данных}
 	\label{img:idef}
 \end{figure}
@@ -24,25 +24,24 @@
 
 \begin{table}[hbtp]
 	\begin{center}
-			\captionsetup{justification=raggedright, singlelinecheck=false}
 			\caption{\label{tab:doctors}Поля таблицы Doctors}
 		\begin{tabular}{|l|l|l|l|l|l|}
 			\hline {Поле} & {Тип данных} & {Описание}  \\ \hline
-			id  & int & Идентификатор работника   \\ \hline
+			id  & serial & Идентификатор работника   \\ \hline
 			login & text & Идентификатор работника для входа в систему \\ \hline
 			password & text & Пароль работника для входа в систему  \\ \hline
-			shedule & text & Расписание, то есть часы приема\\ \hline
+			start\_time & int & Начало рабочих часов\\ \hline
+			end\_time & int & Конец рабочих часов\\ \hline
 		\end{tabular}
 	\end{center}
 \end{table}
 
 \begin{table}[hbtp]
 	\begin{center}
-		\captionsetup{justification=raggedright, singlelinecheck=false}
 		\caption{\label{tab:specializations}Поля таблицы Specializations}
 		\begin{tabular}{|l|l|l|l|l|l|}
 			\hline {Поле} & {Тип данных} & {Описание}  \\ \hline
-			id  & int & Идентификатор специализации \\ \hline
+			id  & serial & Идентификатор специализации \\ \hline
 			specialization & text & Название специализации\\ \hline
 		\end{tabular}
 	\end{center}
@@ -50,7 +49,6 @@
 
 \begin{table}[hbtp]
 	\begin{center}
-		\captionsetup{justification=raggedright, singlelinecheck=false}
 		\caption{\label{tab:DC}Поля развязочной таблицы Doctors-Specializations}
 		\begin{tabular}{|l|l|l|l|l|l|}
 			\hline {Поле} & {Тип данных} & {Описание}  \\ \hline
@@ -60,21 +58,20 @@
 	\end{center}
 \end{table}
 
-В таблице \ref{tab:clients}  описаны поля таблицы Clients. Хоть клиенты и работники имеют 3 одинаковых поля, но они разнесены по разным таблицам, ибо у них разные роли в бизнес-процессах. Разделение позволяет лучше структурировать информацию и дополнительные связи с другими сущностями. В таблице \ref{tab:pets}  описаны поля таблицы Pets. В данном проекте у питомца может быть только один владелец, но у владельца может быть много питомцев. Поэтому информация о связи питомец-владелец реализуется с помощью таблицы Pets, где содержится идентификатор хозяина. 
-
+В таблице \ref{tab:clients}  описаны поля таблицы Clients. Клиенты и работники имеют 3 одинаковых поля, но они разнесены по разным таблицам, ибо у них разные роли в бизнес-процессах. Разделение позволяет лучше структурировать информацию и дополнительные связи с другими сущностями.
 \begin{table}[hbtp]
 	\begin{center}
-		\captionsetup{justification=raggedright, singlelinecheck=false}
 		\caption{\label{tab:clients}Поля таблицы Clients}
-		
 		\begin{tabular}{|l|l|l|l|l|l|}
 			\hline {Поле} & {Тип данных} & {Описание}  \\ \hline
-		id  & int & Идентификатор клиента   \\ \hline
+		id  & serial & Идентификатор клиента   \\ \hline
 		login & text & Идентификатор клиента для входа в систему \\ \hline
 		password & text & Пароль клиента для входа в систему  \\ \hline
 		\end{tabular}
 	\end{center}
 \end{table}
+
+ В таблице \ref{tab:pets}  описаны поля таблицы Pets. В данном проекте у питомца может быть только один владелец, но у владельца может быть много питомцев. Поэтому информация о связи питомец-владелец реализуется с помощью таблицы Pets, где содержится идентификатор хозяина. 
 
 \begin{table}[hbtp]
 	\begin{center}
@@ -82,7 +79,7 @@
 			\caption{\label{tab:pets}Поля таблицы Pets}
 		\begin{tabular}{|l|l|l|l|l|l|}
 			\hline {Поле} & {Тип данных} & {Описание}  \\ \hline
-			id  & int & Идентификатор питомца   \\ \hline
+			id  & serial & Идентификатор питомца   \\ \hline
 			name & text & Кличка питомца \\ \hline
 			type & text & Вид, порода питомца  \\ \hline
 			age & int & Возраст питомца \\ \hline
@@ -92,19 +89,17 @@
 	\end{center}
 \end{table}
 
-В таблице \ref{tab:records}  описаны поля таблицы Records, которая хранит записи на прием. Можно заметить, что таблица не хранит идентификатор хозяина, потому что его можно получить из информации о питомце. 
-
+В таблице \ref{tab:records}  описаны поля таблицы Records, которая хранит записи на прием. 
 \begin{table}[hbtp]
-		\captionsetup{justification=raggedright, singlelinecheck=false}
 		\caption{\label{tab:records}Поля таблицы Records}
 	\begin{center}
 		\begin{tabular}{|l|l|l|l|l|l|}
 			\hline {Поле} & {Тип} & {Описание}  \\ \hline
-			id  & int & Идентификатор приема   \\ \hline
+			id  & serial & Идентификатор приема   \\ \hline
 			id\_doctor & int & Идентификатор доктора  \\ \hline
 			id\_pet & int & Идентификатор питомца   \\ \hline
-			date\_record & date & Дата приема \\ \hline
-			time\_start & time & Время начала приема  \\ \hline
+			start\_time & int & Время начала приема\\ \hline
+			end\_time & int & Время конца приема\\ \hline
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -112,7 +107,7 @@
 \pagebreak
 
 \subsection{Ролевая модель}
-Исходя из функциональности, предъявляемой к приложению и представленной на рисунке \ref{img:use-case} можно выделить следующие роли:
+Исходя из функциональности, предъявляемой к приложению и представленной на рисунке \ref{img:use-case} можно выделить следующие роли.
 \begin{enumerate}[label=\arabic*)]
 	\item Гость. Имеет права только на просмотр таблиц сотрудников и их специализаций, это считается просмотром предоставляемых услуг.
 	\item Клиент. Имеет права на просмотр и изменение записей, связанных с ним и его питомцами в таблицах Clients, Pets, Records. Как и гость может смотреть предоставляемые услуги.
