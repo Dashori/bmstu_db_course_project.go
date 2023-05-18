@@ -36,6 +36,8 @@ test-build-job:       # This job runs in the build stage, which runs first.
 
     - cd backend/bd/postgreSQL
     - docker-compose up -d
+    - psql -h DOCKER_HOST -p2375 -d postgres -U dashori
+    - echo parasha
   needs:
     - image-job
 
