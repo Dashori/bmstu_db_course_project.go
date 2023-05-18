@@ -1,4 +1,4 @@
-image: ntboes/golang-gin
+image: erlendum/golang-dind
 
 # stages: 
 #   - build_debug
