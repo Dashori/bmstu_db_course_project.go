@@ -1,0 +1,77 @@
+image: ntboes/golang-gin
+
+# stages: 
+#   - build_debug
+#   - testing
+#   - build_release
+#   - generate_image
+#   - generate_image_film
+#   - create_film
+#   - research
+
+stages:          # List of stages for jobs, and their order of execution
+  - pre
+  - linter
+  - image
+  - test_build
+  - test
+  - build
+  - extra
+
+# linter-job:
+#   stage: pre
+#   script:
+#     - echo "linter"
+  
+image-job:
+  stage: image
+  script:
+    - echo "docker up"
+  needs:
+    - ["linter-job"]
+
+test-build-job:       # This job runs in the build stage, which runs first.
+  stage: test_build
+  script:
+    - echo "Compiling the code..."
+  needs:
+    - image-job
+
+unit-test-job:   # This job runs in the test stage.
+  stage: test    # It only starts when the job in the build stage completes successfully.
+  script:
+    - echo "Running unit tests..."
+  needs:
+    - test-build-job
+  
+other-test-job:   # This job runs in the test stage.
+  stage: test    # It only starts when the job in the build stage completes successfully.
+  script:
+    - echo "Running other tests..."
+  needs:
+    - test-build-job
+
+build-job:       # This job runs in the build stage, which runs first.
+  stage: build
+  script:
+    - echo "Compiling the code..."
+  needs:
+    - unit-test-job
+    - other-test-job
+
+research-job:   # This job runs in the test stage.
+  stage: extra    # It only starts when the job in the build stage completes successfully.
+  script:
+    - echo "Running unit tests..."
+  when: manual
+  needs:
+   - build-job
+
+documentation-job:   # This job runs in the test stage.
+  stage: extra    # It only starts when the job in the build stage completes successfully.
+  script:
+    - echo "Running unit tests..."
+  when: manual
+  needs:
+    - build-job
+
