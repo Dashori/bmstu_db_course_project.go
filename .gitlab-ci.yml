@@ -4,7 +4,7 @@ variables:
   DOCKER_DRIVER: overlay2
   DOCKER_HOST: tcp://docker:2375
   DOCKER_TLS_CERTDIR: ""
-  
+
 services:
   - docker:dind
 
@@ -45,7 +45,6 @@ test-build-job:       # This job runs in the build stage, which runs first.
   script:
     - cd backend/bd/postgreSQL
     - docker-compose up -d
-    - psql "host=127.0.0.1 port=5432 dbname=postgres user=dashori password=parasha" -f init.sql
   needs:
     - image-job
 
