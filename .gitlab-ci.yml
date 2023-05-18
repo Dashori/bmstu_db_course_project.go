@@ -33,14 +33,17 @@ image-job:
 test-build-job:       # This job runs in the build stage, which runs first.
   stage: test_build
   script:
-    - echo "Compiling the code..."
+    - cd backend/bd
+    - docker-compose up -d
+    - psql "host=127.0.0.1 port=5432 dbname=postgres user=dashori password=parasha" -f init.sql
   needs:
     - image-job
 
 unit-test-job:   # This job runs in the test stage.
   stage: test    # It only starts when the job in the build stage completes successfully.
   script:
-    - echo "Running unit tests..."
+    - cd backend/internal/services/implementation
+    - go test -v -cover
   needs:
     - test-build-job
   
