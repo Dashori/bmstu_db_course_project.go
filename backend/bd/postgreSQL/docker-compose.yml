@@ -13,4 +13,5 @@ services:
       - "5432:5432"
     volumes: 
       - ./scripts:/docker-entrypoint-initdb.d
+    command: /bin/sh -c "entrypoint.sh"
 
