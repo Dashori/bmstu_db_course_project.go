@@ -3,7 +3,7 @@
       "host": "tcp://docker:2375",
       "user": "dashori",
       "password": "parasha",
-      "port": "2375",
+      "port": "5432",
       "dbname": "postgres"
     },
 

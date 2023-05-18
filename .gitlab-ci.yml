@@ -18,26 +18,25 @@ stages:          # List of stages for jobs, and their order of execution
   - build
   - extra
 
-linter-job:
-  stage: pre
-  script:
-    - echo "linter"
+# linter-job:
+#   stage: pre
+#   script:
+#     - echo "linter"
   
-image-job:
-  stage: image
-  script:
-    - echo "docker up"
-  needs:
-    - linter-job
+# image-job:
+#   stage: image
+#   script:
+#     - echo "docker up"
+#   needs:
+#     - linter-job
 
-test-build-job:       # This job runs in the build stage, which runs first.
+init-job:       # This job runs in the build stage, which runs first.
   stage: test_build
   script:
-
     - cd backend/bd/postgreSQL
     - docker-compose up -d
-  needs:
-    - image-job
+  # needs:
+  #   - image-job
 
 unit-test-job:   # This job runs in the test stage.
   stage: test    # It only starts when the job in the build stage completes successfully.
