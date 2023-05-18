@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+  postgres:
+    container_name: postgres_db
+    restart: always
+    build: ./
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "dashori"
+      POSTGRES_PASSWORD: "parasha"
+    ports:
+      - "5432:5432"
