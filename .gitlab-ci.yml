@@ -33,7 +33,7 @@ image-job:
 test-build-job:       # This job runs in the build stage, which runs first.
   stage: test_build
   script:
-    - cd backend/bd
+    - cd backend/bd/postgreSQL
     - docker-compose up -d
     - psql "host=127.0.0.1 port=5432 dbname=postgres user=dashori password=parasha" -f init.sql
   needs:
