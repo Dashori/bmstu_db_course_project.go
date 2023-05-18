@@ -3,5 +3,4 @@ RUN apt-get update
 ADD init.sql /docker-entrypoint-initdb.d
 RUN /bin/bash -c 'chmod +x /var/lib/postgresql/data'
 RUN chmod a+r /docker-entrypoint-initdb.d/*
-# RUN psql -h tcp://docker -p2375 -d podtgres -U dashori
 EXPOSE 6666
