@@ -1,97 +1,97 @@
 package servicesImplementation
 
-import (
-	"backend/internal/models"
-	"backend/internal/repository"
-	"backend/internal/repository/postgres_repo"
-	"backend/internal/services"
-	"github.com/charmbracelet/log"
-	"github.com/stretchr/testify/require"
-	"os"
-	"testing"
-	"time"
-)
+// import (
+// 	"backend/internal/models"
+// 	"backend/internal/repository"
+// 	"backend/internal/repository/postgres_repo"
+// 	"backend/internal/services"
+// 	"github.com/charmbracelet/log"
+// 	"github.com/stretchr/testify/require"
+// 	"os"
+// 	"testing"
+// 	"time"
+// )
 
-type recordServiceFieldsPostgres struct {
-	recordRepository *repository.RecordRepository
-	doctorRepository *repository.DoctorRepository
-	clientRepository *repository.ClientRepository
-	petRepository    *repository.PetRepository
-	logger           *log.Logger
-}
+// type recordServiceFieldsPostgres struct {
+// 	recordRepository *repository.RecordRepository
+// 	doctorRepository *repository.DoctorRepository
+// 	clientRepository *repository.ClientRepository
+// 	petRepository    *repository.PetRepository
+// 	logger           *log.Logger
+// }
 
-func createRecordServiceFieldsPostgres() *recordServiceFieldsPostgres {
-	fields := new(recordServiceFieldsPostgres)
+// func createRecordServiceFieldsPostgres() *recordServiceFieldsPostgres {
+// 	fields := new(recordServiceFieldsPostgres)
 
-	repositoryFields, err := postgres_repo.CreatePostgresRepositoryFieldsTest(configFileName, pathToConfig)
+// 	repositoryFields, err := postgres_repo.CreatePostgresRepositoryFieldsTest(configFileName, pathToConfig)
 
-	if err != nil {
-		return nil
-	}
+// 	if err != nil {
+// 		return nil
+// 	}
 
-	recordRepo := postgres_repo.CreateRecordPostgresRepository(repositoryFields)
-	fields.recordRepository = &recordRepo
+// 	recordRepo := postgres_repo.CreateRecordPostgresRepository(repositoryFields)
+// 	fields.recordRepository = &recordRepo
 
-	doctorRepo := postgres_repo.CreateDoctorPostgresRepository(repositoryFields)
-	fields.doctorRepository = &doctorRepo
+// 	doctorRepo := postgres_repo.CreateDoctorPostgresRepository(repositoryFields)
+// 	fields.doctorRepository = &doctorRepo
 
-	clientRepo := postgres_repo.CreateClientPostgresRepository(repositoryFields)
-	fields.clientRepository = &clientRepo
+// 	clientRepo := postgres_repo.CreateClientPostgresRepository(repositoryFields)
+// 	fields.clientRepository = &clientRepo
 
-	petRepo := postgres_repo.CreatePetPostgresRepository(repositoryFields)
-	fields.petRepository = &petRepo
+// 	petRepo := postgres_repo.CreatePetPostgresRepository(repositoryFields)
+// 	fields.petRepository = &petRepo
 
-	fields.logger = log.New(os.Stderr)
-	fields.logger.SetLevel(log.FatalLevel)
+// 	fields.logger = log.New(os.Stderr)
+// 	fields.logger.SetLevel(log.FatalLevel)
 
-	return fields
-}
+// 	return fields
+// }
 
-func createRecordServicePostgres(fields *recordServiceFieldsPostgres) services.RecordService {
-	return NewRecordServiceImplementation(*fields.recordRepository, *fields.doctorRepository,
-		*fields.clientRepository, *fields.petRepository, fields.logger)
-}
+// func createRecordServicePostgres(fields *recordServiceFieldsPostgres) services.RecordService {
+// 	return NewRecordServiceImplementation(*fields.recordRepository, *fields.doctorRepository,
+// 		*fields.clientRepository, *fields.petRepository, fields.logger)
+// }
 
-var testRecordCreatePostgresSuccess = []struct {
-	TestName        string
-	InputData       struct{}
-	Prepare         func(fields *recordServiceFieldsPostgres)
-	CheckOutput     func(t *testing.T, err error)
-	CheckOutputHelp func(t *testing.T, err error)
-}{
-	{
-		TestName:  "record creare and delete success",
-		InputData: struct{}{},
+// var testRecordCreatePostgresSuccess = []struct {
+// 	TestName        string
+// 	InputData       struct{}
+// 	Prepare         func(fields *recordServiceFieldsPostgres)
+// 	CheckOutput     func(t *testing.T, err error)
+// 	CheckOutputHelp func(t *testing.T, err error)
+// }{
+// 	{
+// 		TestName:  "record creare and delete success",
+// 		InputData: struct{}{},
 
-		CheckOutput: func(t *testing.T, err error) {
-			require.NoError(t, err)
-		},
+// 		CheckOutput: func(t *testing.T, err error) {
+// 			require.NoError(t, err)
+// 		},
 
-		CheckOutputHelp: func(t *testing.T, err error) {
-			require.NoError(t, err)
-		},
-	},
-}
+// 		CheckOutputHelp: func(t *testing.T, err error) {
+// 			require.NoError(t, err)
+// 		},
+// 	},
+// }
 
-var testRecordCreatePostgresFailure = []struct {
-	TestName        string
-	InputData       struct{}
-	Prepare         func(fields *recordServiceFields)
-	CheckOutput     func(t *testing.T, err error)
-	CheckOutputHelp func(t *testing.T, err error)
-}{
-	{
-		TestName:  "record create failure",
-		InputData: struct{}{},
+// var testRecordCreatePostgresFailure = []struct {
+// 	TestName        string
+// 	InputData       struct{}
+// 	Prepare         func(fields *recordServiceFields)
+// 	CheckOutput     func(t *testing.T, err error)
+// 	CheckOutputHelp func(t *testing.T, err error)
+// }{
+// 	{
+// 		TestName:  "record create failure",
+// 		InputData: struct{}{},
 
-		CheckOutput: func(t *testing.T, err error) {
-			require.Error(t, err)
-		},
-		CheckOutputHelp: func(t *testing.T, err error) {
-			require.NoError(t, err)
-		},
-	},
-}
+// 		CheckOutput: func(t *testing.T, err error) {
+// 			require.Error(t, err)
+// 		},
+// 		CheckOutputHelp: func(t *testing.T, err error) {
+// 			require.NoError(t, err)
+// 		},
+// 	},
+// }
 
 // func TestRecordServiceImplementationCreatePostgres(t *testing.T) {
 // 	for _, tt := range testRecordCreatePostgresSuccess {
