@@ -1,7 +1,23 @@
 version: "3.9"
 
 services:
-  postgres:
+  app: # Ваше приложение
+    build: .
+    container_name: my-app
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db # адрес хоста базы данных (используется имя сервиса)
+      - DB_PORT=5432 # порт базы данных
+      - DB_USER=dashori
+      - DB_PASSWORD=parasha
+      - DB_NAME=postgres
+
+    ports:
+      - 8080:8080
+
+
+  db:
     container_name: postgres_db
     restart: always
     build: ./
@@ -9,9 +25,9 @@ services:
       POSTGRES_DB: "postgres"
       POSTGRES_USER: "dashori"
       POSTGRES_PASSWORD: "parasha"
-    ports:
-      - "5432:5432"
-    volumes: 
+    volumes:
+      - db_data:/var/lib/postgresql/data
       - ./scripts:/docker-entrypoint-initdb.d
-    command: /bin/sh -c "entrypoint.sh"
+    ports:
+      - 5432:5432
 
