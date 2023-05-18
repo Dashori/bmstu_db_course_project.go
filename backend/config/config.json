@@ -1,6 +1,6 @@
 {
     "postgres": {
-      "host": "tcp://docker:2375",
+      "host": "localhost",
       "user": "dashori",
       "password": "parasha",
       "port": "5432",
