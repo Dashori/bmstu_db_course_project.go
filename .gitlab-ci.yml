@@ -18,17 +18,17 @@ stages:          # List of stages for jobs, and their order of execution
   - build
   - extra
 
-# linter-job:
-#   stage: pre
-#   script:
-#     - echo "linter"
+linter-job:
+  stage: pre
+  script:
+    - echo "linter"
   
 image-job:
   stage: image
   script:
     - echo "docker up"
   needs:
-    - ["linter-job"]
+    - linter-job
 
 test-build-job:       # This job runs in the build stage, which runs first.
   stage: test_build
