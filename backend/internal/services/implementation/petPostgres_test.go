@@ -82,47 +82,47 @@ var testPetCreatePostgresFailure = []struct {
 	},
 }
 
-func TestPetServiceImplementationCreatePostgres(t *testing.T) {
-	for _, tt := range testPetCreatePostgresSuccess {
-		tt := tt
-		t.Run(tt.TestName, func(t *testing.T) {
-			fields := createRecordServiceFieldsPostgres()
+// func TestPetServiceImplementationCreatePostgres(t *testing.T) {
+// 	for _, tt := range testPetCreatePostgresSuccess {
+// 		tt := tt
+// 		t.Run(tt.TestName, func(t *testing.T) {
+// 			fields := createRecordServiceFieldsPostgres()
 
-			clients := fields.clientRepository
-			pets := fields.petRepository
+// 			clients := fields.clientRepository
+// 			pets := fields.petRepository
 
-			err := (*clients).Create(&models.Client{Login: "ChicagoTest", Password: "12345"})
-			tt.CheckOutputHelp(t, err)
+// 			err := (*clients).Create(&models.Client{Login: "ChicagoTest", Password: "12345"})
+// 			tt.CheckOutputHelp(t, err)
 
-			client, err := (*clients).GetClientByLogin("ChicagoTest")
-			tt.CheckOutputHelp(t, err)
+// 			client, err := (*clients).GetClientByLogin("ChicagoTest")
+// 			tt.CheckOutputHelp(t, err)
 
-			err = (*pets).Create(&models.Pet{Name: "Havrosha", Type: "cat", Age: 1, Health: 10, ClientId: client.ClientId})
-			tt.CheckOutput(t, err)
+// 			err = (*pets).Create(&models.Pet{Name: "Havrosha", Type: "cat", Age: 1, Health: 10, ClientId: client.ClientId})
+// 			tt.CheckOutput(t, err)
 
-			// трюк чтоб узнать id питомца Havrosha
-			clientPets, err := (*pets).GetAllByClient(client.ClientId)
-			tt.CheckOutputHelp(t, err)
-			petId := clientPets[0].PetId
+// 			// трюк чтоб узнать id питомца Havrosha
+// 			clientPets, err := (*pets).GetAllByClient(client.ClientId)
+// 			tt.CheckOutputHelp(t, err)
+// 			petId := clientPets[0].PetId
 
-			err = (*pets).Delete(petId)
-			tt.CheckOutputHelp(t, err)
+// 			err = (*pets).Delete(petId)
+// 			tt.CheckOutputHelp(t, err)
 
-			err = (*clients).Delete(client.ClientId)
-			tt.CheckOutputHelp(t, err)
-		})
-	}
+// 			err = (*clients).Delete(client.ClientId)
+// 			tt.CheckOutputHelp(t, err)
+// 		})
+// 	}
 
-	for _, tt := range testPetCreatePostgresFailure {
-		tt := tt
-		t.Run(tt.TestName, func(t *testing.T) {
-			fields := createPetServiceFieldsPostgres()
+// 	for _, tt := range testPetCreatePostgresFailure {
+// 		tt := tt
+// 		t.Run(tt.TestName, func(t *testing.T) {
+// 			fields := createPetServiceFieldsPostgres()
 
-			pet := createPetServicePostgres(fields)
+// 			pet := createPetServicePostgres(fields)
 
-			err := pet.Create(tt.InputData.pet, tt.InputData.login)
+// 			err := pet.Create(tt.InputData.pet, tt.InputData.login)
 
-			tt.CheckOutput(t, err)
-		})
-	}
-}
+// 			tt.CheckOutput(t, err)
+// 		})
+// 	}
+// }

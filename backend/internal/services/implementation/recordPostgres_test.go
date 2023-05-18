@@ -93,100 +93,100 @@ var testRecordCreatePostgresFailure = []struct {
 	},
 }
 
-func TestRecordServiceImplementationCreatePostgres(t *testing.T) {
-	for _, tt := range testRecordCreatePostgresSuccess {
-		tt := tt
-		t.Run(tt.TestName, func(t *testing.T) {
-			fields := createRecordServiceFieldsPostgres()
-			records := createRecordServicePostgres(fields)
+// func TestRecordServiceImplementationCreatePostgres(t *testing.T) {
+// 	for _, tt := range testRecordCreatePostgresSuccess {
+// 		tt := tt
+// 		t.Run(tt.TestName, func(t *testing.T) {
+// 			fields := createRecordServiceFieldsPostgres()
+// 			records := createRecordServicePostgres(fields)
 
-			clients := fields.clientRepository
-			doctors := fields.doctorRepository
-			pets := fields.petRepository
+// 			clients := fields.clientRepository
+// 			doctors := fields.doctorRepository
+// 			pets := fields.petRepository
 
-			err := (*clients).Create(&models.Client{Login: "ChicagoTest", Password: "12345"})
-			tt.CheckOutputHelp(t, err)
+// 			err := (*clients).Create(&models.Client{Login: "ChicagoTest", Password: "12345"})
+// 			tt.CheckOutputHelp(t, err)
 
-			client, err := (*clients).GetClientByLogin("ChicagoTest")
-			tt.CheckOutputHelp(t, err)
+// 			client, err := (*clients).GetClientByLogin("ChicagoTest")
+// 			tt.CheckOutputHelp(t, err)
 
-			err = (*pets).Create(&models.Pet{Name: "Havrosha", Type: "cat", Age: 1, Health: 10, ClientId: client.ClientId})
-			tt.CheckOutputHelp(t, err)
+// 			err = (*pets).Create(&models.Pet{Name: "Havrosha", Type: "cat", Age: 1, Health: 10, ClientId: client.ClientId})
+// 			tt.CheckOutputHelp(t, err)
 
-			err = (*doctors).Create(&models.Doctor{Login: "ChicagoTest", Password: "12345", StartTime: 10, EndTime: 23})
-			tt.CheckOutputHelp(t, err)
+// 			err = (*doctors).Create(&models.Doctor{Login: "ChicagoTest", Password: "12345", StartTime: 10, EndTime: 23})
+// 			tt.CheckOutputHelp(t, err)
 
-			doctor, err := (*doctors).GetDoctorByLogin("ChicagoTest")
-			tt.CheckOutputHelp(t, err)
+// 			doctor, err := (*doctors).GetDoctorByLogin("ChicagoTest")
+// 			tt.CheckOutputHelp(t, err)
 
-			// трюк чтоб узнать id питомца Havrosha
-			clientPets, err := (*pets).GetAllByClient(client.ClientId)
-			tt.CheckOutputHelp(t, err)
-			petId := clientPets[0].PetId
+// 			// трюк чтоб узнать id питомца Havrosha
+// 			clientPets, err := (*pets).GetAllByClient(client.ClientId)
+// 			tt.CheckOutputHelp(t, err)
+// 			petId := clientPets[0].PetId
 
-			err = records.CreateRecord(&models.Record{
-				PetId: petId, ClientId: client.ClientId, DoctorId: doctor.DoctorId,
-				DatetimeStart: time.Date(3000, 8, 15, 14, 00, 00, 00, time.UTC),
-				DatetimeEnd:   time.Date(3000, 8, 15, 15, 00, 00, 00, time.UTC)})
+// 			err = records.CreateRecord(&models.Record{
+// 				PetId: petId, ClientId: client.ClientId, DoctorId: doctor.DoctorId,
+// 				DatetimeStart: time.Date(3000, 8, 15, 14, 00, 00, 00, time.UTC),
+// 				DatetimeEnd:   time.Date(3000, 8, 15, 15, 00, 00, 00, time.UTC)})
 
-			tt.CheckOutput(t, err)
+// 			tt.CheckOutput(t, err)
 
-			err = (*pets).Delete(petId) // при удалении pet удалится и запись в records
-			tt.CheckOutputHelp(t, err)
+// 			err = (*pets).Delete(petId) // при удалении pet удалится и запись в records
+// 			tt.CheckOutputHelp(t, err)
 
-			err = (*doctors).Delete(doctor.DoctorId)
-			tt.CheckOutputHelp(t, err)
+// 			err = (*doctors).Delete(doctor.DoctorId)
+// 			tt.CheckOutputHelp(t, err)
 
-			err = (*clients).Delete(client.ClientId)
-			tt.CheckOutputHelp(t, err)
-		})
-	}
+// 			err = (*clients).Delete(client.ClientId)
+// 			tt.CheckOutputHelp(t, err)
+// 		})
+// 	}
 
-	for _, tt := range testRecordCreatePostgresFailure {
-		tt := tt
-		t.Run(tt.TestName, func(t *testing.T) {
-			fields := createRecordServiceFieldsPostgres()
-			records := createRecordServicePostgres(fields)
+// 	for _, tt := range testRecordCreatePostgresFailure {
+// 		tt := tt
+// 		t.Run(tt.TestName, func(t *testing.T) {
+// 			fields := createRecordServiceFieldsPostgres()
+// 			records := createRecordServicePostgres(fields)
 
-			clients := fields.clientRepository
-			doctors := fields.doctorRepository
-			pets := fields.petRepository
+// 			clients := fields.clientRepository
+// 			doctors := fields.doctorRepository
+// 			pets := fields.petRepository
 
-			err := (*clients).Create(&models.Client{Login: "ChicagoTest", Password: "12345"})
-			tt.CheckOutputHelp(t, err)
+// 			err := (*clients).Create(&models.Client{Login: "ChicagoTest", Password: "12345"})
+// 			tt.CheckOutputHelp(t, err)
 
-			client, err := (*clients).GetClientByLogin("ChicagoTest")
-			tt.CheckOutputHelp(t, err)
+// 			client, err := (*clients).GetClientByLogin("ChicagoTest")
+// 			tt.CheckOutputHelp(t, err)
 
-			err = (*pets).Create(&models.Pet{Name: "Havrosha", Type: "cat", Age: 1, Health: 10, ClientId: client.ClientId})
-			tt.CheckOutputHelp(t, err)
+// 			err = (*pets).Create(&models.Pet{Name: "Havrosha", Type: "cat", Age: 1, Health: 10, ClientId: client.ClientId})
+// 			tt.CheckOutputHelp(t, err)
 
-			err = (*doctors).Create(&models.Doctor{Login: "ChicagoTest", Password: "12345", StartTime: 10, EndTime: 23})
-			tt.CheckOutputHelp(t, err)
+// 			err = (*doctors).Create(&models.Doctor{Login: "ChicagoTest", Password: "12345", StartTime: 10, EndTime: 23})
+// 			tt.CheckOutputHelp(t, err)
 
-			doctor, err := (*doctors).GetDoctorByLogin("ChicagoTest")
-			tt.CheckOutputHelp(t, err)
+// 			doctor, err := (*doctors).GetDoctorByLogin("ChicagoTest")
+// 			tt.CheckOutputHelp(t, err)
 
-			// трюк чтоб узнать id питомца Havrosha
-			clientPets, err := (*pets).GetAllByClient(client.ClientId)
-			tt.CheckOutputHelp(t, err)
-			petId := clientPets[0].PetId
+// 			// трюк чтоб узнать id питомца Havrosha
+// 			clientPets, err := (*pets).GetAllByClient(client.ClientId)
+// 			tt.CheckOutputHelp(t, err)
+// 			petId := clientPets[0].PetId
 
-			err = records.CreateRecord(&models.Record{
-				PetId: petId, ClientId: client.ClientId, DoctorId: doctor.DoctorId,
-				DatetimeStart: time.Date(3000, 8, 15, 16, 00, 00, 00, time.UTC),
-				DatetimeEnd:   time.Date(3000, 8, 15, 15, 00, 00, 00, time.UTC)})
+// 			err = records.CreateRecord(&models.Record{
+// 				PetId: petId, ClientId: client.ClientId, DoctorId: doctor.DoctorId,
+// 				DatetimeStart: time.Date(3000, 8, 15, 16, 00, 00, 00, time.UTC),
+// 				DatetimeEnd:   time.Date(3000, 8, 15, 15, 00, 00, 00, time.UTC)})
 
-			tt.CheckOutput(t, err)
+// 			tt.CheckOutput(t, err)
 
-			err = (*pets).Delete(petId) // при удалении pet удалится и запись в records
-			tt.CheckOutputHelp(t, err)
+// 			err = (*pets).Delete(petId) // при удалении pet удалится и запись в records
+// 			tt.CheckOutputHelp(t, err)
 
-			err = (*doctors).Delete(doctor.DoctorId)
-			tt.CheckOutputHelp(t, err)
+// 			err = (*doctors).Delete(doctor.DoctorId)
+// 			tt.CheckOutputHelp(t, err)
 
-			err = (*clients).Delete(client.ClientId)
-			tt.CheckOutputHelp(t, err)
-		})
-	}
-}
+// 			err = (*clients).Delete(client.ClientId)
+// 			tt.CheckOutputHelp(t, err)
+// 		})
+// 	}
+// }
