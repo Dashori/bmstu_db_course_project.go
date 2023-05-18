@@ -1,9 +1,9 @@
 {
     "postgres": {
-      "host": "127.0.0.1",
+      "host": "tcp://docker",
       "user": "dashori",
       "password": "parasha",
-      "port": "5432",
+      "port": "2375",
       "dbname": "postgres"
     },
 
