@@ -1,5 +1,15 @@
 image: erlendum/golang-dind
 
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_TLS_CERTDIR: ""
+  
+services:
+  - docker:dind
+
+
+
 # stages: 
 #   - build_debug
 #   - testing
