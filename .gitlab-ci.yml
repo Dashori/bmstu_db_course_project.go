@@ -30,7 +30,7 @@ stages:          # List of stages for jobs, and their order of execution
 #   needs:
 #     - linter-job
 
-init-job:       # This job runs in the build stage, which runs first.
+test-build-job:       # This job runs in the build stage, which runs first.
   stage: test_build
   script:
     - cd backend/bd/postgreSQL
@@ -64,19 +64,19 @@ build-job:       # This job runs in the build stage, which runs first.
     - unit-test-job
     - other-test-job
 
-research-job:   # This job runs in the test stage.
-  stage: extra    # It only starts when the job in the build stage completes successfully.
-  script:
-    - echo "Running unit tests..."
-  when: manual
-  needs:
-   - build-job
+# research-job:   # This job runs in the test stage.
+#   stage: extra    # It only starts when the job in the build stage completes successfully.
+#   script:
+#     - echo "Running unit tests..."
+#   when: manual
+#   needs:
+#    - build-job
 
-documentation-job:   # This job runs in the test stage.
-  stage: extra    # It only starts when the job in the build stage completes successfully.
-  script:
-    - echo "Running unit tests..."
-  when: manual
-  needs:
-    - build-job
+# documentation-job:   # This job runs in the test stage.
+#   stage: extra    # It only starts when the job in the build stage completes successfully.
+#   script:
+#     - echo "Running unit tests..."
+#   when: manual
+#   needs:
+#     - build-job
 
