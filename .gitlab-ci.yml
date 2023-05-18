@@ -9,7 +9,6 @@ services:
   - docker:dind
 
 
-
 # stages: 
 #   - build_debug
 #   - testing
