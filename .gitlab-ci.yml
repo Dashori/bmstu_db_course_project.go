@@ -9,15 +9,6 @@ services:
   - docker:dind
 
 
-# stages: 
-#   - build_debug
-#   - testing
-#   - build_release
-#   - generate_image
-#   - generate_image_film
-#   - create_film
-#   - research
-
 stages:          # List of stages for jobs, and their order of execution
   - pre
   - linter
