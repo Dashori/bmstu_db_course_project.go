@@ -36,6 +36,7 @@ test-build-job:       # This job runs in the build stage, which runs first.
     - cd backend/bd/postgreSQL
     - docker-compose up -d
     - docker ps
+    - netstat
   # needs:
   #   - image-job
 

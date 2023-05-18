@@ -16,7 +16,7 @@ type PostgresFlags struct {
 }
 
 func (p *PostgresFlags) InitDB(logger *log.Logger) (*sql.DB, error) {
-	logger.Debug("POSTGRES!Start init postgreSQL", "user", p.User, "DBName", p.DBName,
+	logger.Debug("POSTGRES! Start init postgreSQL", "user", p.User, "DBName", p.DBName,
 		"host", p.Host, "port", p.Port)
 
 	dsnPGConn := fmt.Sprintf("user=%s dbname=%s password=%s host=%s port=%s sslmode=disable",
