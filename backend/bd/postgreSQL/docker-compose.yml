@@ -5,7 +5,7 @@ services:
     build: .
     container_name: my-app
     depends_on:
-      - db
+      - postgres
     environment:
       - DB_HOST=db # адрес хоста базы данных (используется имя сервиса)
       - DB_PORT=5432 # порт базы данных
@@ -15,21 +15,6 @@ services:
 
     ports:
       - 8080:8080
-
-
-  db:
-    container_name: postgres_db
-    restart: always
-    build: ./
-    environment:
-      POSTGRES_DB: "postgres"
-      POSTGRES_USER: "dashori"
-      POSTGRES_PASSWORD: "parasha"
-    volumes:
-      - db_data:/var/lib/postgresql/data
-      - ./scripts:/docker-entrypoint-initdb.d
-    ports:
-      - 5432:5432
 
   postgres:
     container_name: postgres_db
