@@ -1,6 +1,6 @@
 {
     "postgres": {
-      "host": "docker:2375",
+      "host": "postgres",
       "user": "dashori",
       "password": "parasha",
       "port": "5432",

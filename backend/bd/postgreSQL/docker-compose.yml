@@ -1,7 +1,7 @@
 version: "3.9"
 
 services:
-  app: # Ваше приложение
+  app: 
     build: .
     container_name: my-app
     depends_on:
@@ -30,4 +30,17 @@ services:
       - ./scripts:/docker-entrypoint-initdb.d
     ports:
       - 5432:5432
+
+  postgres:
+    container_name: postgres_db
+    restart: always
+    build: ./
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "dashori"
+      POSTGRES_PASSWORD: "parasha"
+    ports:
+      - "5432:5432"
+    volumes: 
+      - ./scripts:/docker-entrypoint-initdb.d
 
