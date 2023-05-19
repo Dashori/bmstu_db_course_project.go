@@ -7,7 +7,7 @@ services:
     depends_on:
       - postgres
     environment:
-      - DB_HOST=db # адрес хоста базы данных (используется имя сервиса)
+      - DB_HOST=postgres # адрес хоста базы данных (используется имя сервиса)
       - DB_PORT=5432 # порт базы данных
       - DB_USER=dashori
       - DB_PASSWORD=parasha
