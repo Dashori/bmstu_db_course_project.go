@@ -35,19 +35,19 @@ test-build-job:       # This job runs in the build stage, which runs first.
   script:
     - cd backend/bd/postgreSQL
     - docker-compose up -d
-    - docker ps
-    - netstat
+    # - docker ps
+    # - netstat
   # needs:
   #   - image-job
 
 unit-test-job:   # This job runs in the test stage.
   stage: test    # It only starts when the job in the build stage completes successfully.
   script:
-    - cd backend 
-    - go mod init backend
-    - go mod tidy
-    - cd internal/services/implementation
-    - go test -v -cover
+    # - cd backend 
+    # - go mod init backend
+    # - go mod tidy
+    # - cd internal/services/implementation
+    # - go test -v -cover
   needs:
     - test-build-job
   

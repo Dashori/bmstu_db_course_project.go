@@ -2,16 +2,20 @@ version: "3.9"
 
 services:
   app: 
-    build: .
+    image: golang:1.20
     container_name: my-app
     depends_on:
       - postgres
     environment:
-      - DB_HOST=postgres # адрес хоста базы данных (используется имя сервиса)
-      - DB_PORT=5432 # порт базы данных
-      - DB_USER=dashori
-      - DB_PASSWORD=parasha
-      - DB_NAME=postgres
+      - POSTGRES_DB=postgres # адрес хоста базы данных (используется имя сервиса)
+      - POSTGRES_USER=dashori
+      - POSTGRES_PASSWORD=parasha
+    script:
+      - cd ../..
+      - go mod init backend
+      - go mod tidy
+      - cd internal/services/implementation
+      - go test -v -cover
 
     ports:
       - 8080:8080
@@ -19,7 +23,7 @@ services:
   postgres:
     container_name: postgres_db
     restart: always
-    build: ./
+    image: postgres:latest
     environment:
       POSTGRES_DB: "postgres"
       POSTGRES_USER: "dashori"
