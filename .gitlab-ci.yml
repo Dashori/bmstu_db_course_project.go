@@ -43,11 +43,11 @@ test-build-job:       # This job runs in the build stage, which runs first.
 unit-test-job:   # This job runs in the test stage.
   stage: test    # It only starts when the job in the build stage completes successfully.
   script:
-    # - cd backend 
-    # - go mod init backend
-    # - go mod tidy
-    # - cd internal/services/implementation
-    # - go test -v -cover
+    - cd backend 
+    - go mod init backend
+    - go mod tidy
+    - cd internal/services/implementation
+    - go test -v -cover
   needs:
     - test-build-job
   
