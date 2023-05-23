@@ -30,45 +30,51 @@ stages:          # List of stages for jobs, and their order of execution
 #   needs:
 #     - linter-job
 
-test-build-job:       # This job runs in the build stage, which runs first.
+test-build-job:      
   stage: test_build
   script:
-      - echo "hello world"
-    # - cd backend/db/postgreSQL
-    # - docker-compose up -d
-    # - docker ps
-    # - netstat
+      - cd backend 
+      - go mod init backend
+      - go mod tidy
   # needs:
   #   - image-job
 
-unit-test-job:   # This job runs in the test stage.
-  stage: test    # It only starts when the job in the build stage completes successfully.
+unit-test-job:  
+  stage: test   
   script:
-    - cd backend 
-    - go mod init backend
-    - go mod tidy
-    - cd internal/services/implementation
-    - go test client_test.go client.go -v -cover
-    - go test record.go record_test.go -v -cover
-    - go test pet_test.go pet.go -v -cover
-    - go test doctor.go doctor_test.go -v -cover
+    - cd backend/internal/services/implementation
+    - go test client_test.go client.go -v -cover -coverprofile=client.out
+    - go test record.go record_test.go -v -cover -coverprofile=record.out
+    - go test pet_test.go pet.go -v -cover -coverprofile=pet.out
+    - go test doctor.go doctor_test.go -v -cover  -coverprofile=doctor.out
+  artifacts:
+    paths:
+      - coverprofile
+    expire_in: 1 hour
   needs:
     - test-build-job
   
-other-test-job:   # This job runs in the test stage.
-  stage: test    # It only starts when the job in the build stage completes successfully.
+db-test-job:  
+  stage: test   
   script:
-    - echo "Running other tests..."
+    - echo "Running tests with database..."
   needs:
     - test-build-job
 
-build-job:       # This job runs in the build stage, which runs first.
+build-job:    
   stage: build
   script:
-    - echo "Compiling the code..."
+    - cd backend/cmd
+    - go build main.go
+  artifacts:
+    paths:
+      - build
+    expire_in: 1 hour
   needs:
     - unit-test-job
-    - other-test-job
+    - db-test-job
+
+
 
 # research-job:   # This job runs in the test stage.
 #   stage: extra    # It only starts when the job in the build stage completes successfully.
