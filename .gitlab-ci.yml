@@ -47,7 +47,10 @@ unit-test-job:   # This job runs in the test stage.
     - go mod init backend
     - go mod tidy
     - cd internal/services/implementation
-    - go test -v -cover
+    - go test client_test.go client.go -v -cover
+    - go test record.go record_test.go -v -cover
+    - go test pet_test.go pet.go -v -cover
+    - go test doctor.go doctor_test.go -v -cover
   needs:
     # - test-build-job
   

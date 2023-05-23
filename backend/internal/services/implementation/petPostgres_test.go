@@ -1,86 +1,86 @@
 package servicesImplementation
 
-// import (
-// 	"backend/internal/models"
-// 	"backend/internal/repository"
-// 	"backend/internal/repository/postgres_repo"
-// 	"backend/internal/services"
-// 	"github.com/charmbracelet/log"
-// 	"github.com/stretchr/testify/require"
-// 	"os"
-// 	"testing"
-// )
+import (
+	"backend/internal/models"
+	"backend/internal/repository"
+	"backend/internal/repository/postgres_repo"
+	"backend/internal/services"
+	"github.com/charmbracelet/log"
+	"github.com/stretchr/testify/require"
+	"os"
+	"testing"
+)
 
-// type petServiceFieldsPostgres struct {
-// 	petRepository    *repository.PetRepository
-// 	clientRepository *repository.ClientRepository
-// 	logger           *log.Logger
-// }
+type petServiceFieldsPostgres struct {
+	petRepository    *repository.PetRepository
+	clientRepository *repository.ClientRepository
+	logger           *log.Logger
+}
 
-// func createPetServiceFieldsPostgres() *petServiceFieldsPostgres {
-// 	fields := new(petServiceFieldsPostgres)
+func createPetServiceFieldsPostgres() *petServiceFieldsPostgres {
+	fields := new(petServiceFieldsPostgres)
 
-// 	repositoryFields, err := postgres_repo.CreatePostgresRepositoryFieldsTest(configFileName, pathToConfig)
+	repositoryFields, err := postgres_repo.CreatePostgresRepositoryFieldsTest(configFileName, pathToConfig)
 
-// 	if err != nil {
-// 		return nil
-// 	}
+	if err != nil {
+		return nil
+	}
 
-// 	petRepo := postgres_repo.CreatePetPostgresRepository(repositoryFields)
-// 	fields.petRepository = &petRepo
+	petRepo := postgres_repo.CreatePetPostgresRepository(repositoryFields)
+	fields.petRepository = &petRepo
 
-// 	clientRepo := postgres_repo.CreateClientPostgresRepository(repositoryFields)
-// 	fields.clientRepository = &clientRepo
+	clientRepo := postgres_repo.CreateClientPostgresRepository(repositoryFields)
+	fields.clientRepository = &clientRepo
 
-// 	fields.logger = log.New(os.Stderr)
-// 	fields.logger.SetLevel(log.FatalLevel)
+	fields.logger = log.New(os.Stderr)
+	fields.logger.SetLevel(log.FatalLevel)
 
-// 	return fields
-// }
+	return fields
+}
 
-// func createPetServicePostgres(fields *petServiceFieldsPostgres) services.PetService {
-// 	return NewPetServiceImplementation(*fields.petRepository, *fields.clientRepository, fields.logger)
-// }
+func createPetServicePostgres(fields *petServiceFieldsPostgres) services.PetService {
+	return NewPetServiceImplementation(*fields.petRepository, *fields.clientRepository, fields.logger)
+}
 
-// var testPetCreatePostgresSuccess = []struct {
-// 	TestName        string
-// 	InputData       struct{}
-// 	Prepare         func(fields *petServiceFieldsPostgres)
-// 	CheckOutput     func(t *testing.T, err error)
-// 	CheckOutputHelp func(t *testing.T, err error)
-// }{
-// 	{
-// 		TestName:  "pet create and delete success",
-// 		InputData: struct{}{},
-// 		CheckOutput: func(t *testing.T, err error) {
-// 			require.NoError(t, err)
-// 		},
-// 		CheckOutputHelp: func(t *testing.T, err error) {
-// 			require.NoError(t, err)
-// 		},
-// 	},
-// }
+var testPetCreatePostgresSuccess = []struct {
+	TestName        string
+	InputData       struct{}
+	Prepare         func(fields *petServiceFieldsPostgres)
+	CheckOutput     func(t *testing.T, err error)
+	CheckOutputHelp func(t *testing.T, err error)
+}{
+	{
+		TestName:  "pet create and delete success",
+		InputData: struct{}{},
+		CheckOutput: func(t *testing.T, err error) {
+			require.NoError(t, err)
+		},
+		CheckOutputHelp: func(t *testing.T, err error) {
+			require.NoError(t, err)
+		},
+	},
+}
 
-// var testPetCreatePostgresFailure = []struct {
-// 	TestName  string
-// 	InputData struct {
-// 		pet   *models.Pet
-// 		login string
-// 	}
-// 	Prepare     func(fields *petServiceFieldsPostgres)
-// 	CheckOutput func(t *testing.T, err error)
-// }{
-// 	{
-// 		TestName: "pet creare failure",
-// 		InputData: struct {
-// 			pet   *models.Pet
-// 			login string
-// 		}{pet: &models.Pet{Name: "Havrosha", ClientId: 1}, login: "Ffdpfpsgf"},
-// 		CheckOutput: func(t *testing.T, err error) {
-// 			require.Error(t, err)
-// 		},
-// 	},
-// }
+var testPetCreatePostgresFailure = []struct {
+	TestName  string
+	InputData struct {
+		pet   *models.Pet
+		login string
+	}
+	Prepare     func(fields *petServiceFieldsPostgres)
+	CheckOutput func(t *testing.T, err error)
+}{
+	{
+		TestName: "pet creare failure",
+		InputData: struct {
+			pet   *models.Pet
+			login string
+		}{pet: &models.Pet{Name: "Havrosha", ClientId: 1}, login: "Ffdpfpsgf"},
+		CheckOutput: func(t *testing.T, err error) {
+			require.Error(t, err)
+		},
+	},
+}
 
 // func TestPetServiceImplementationCreatePostgres(t *testing.T) {
 // 	for _, tt := range testPetCreatePostgresSuccess {
