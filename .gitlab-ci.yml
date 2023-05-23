@@ -42,7 +42,10 @@ test-build-job:
 unit-test-job:  
   stage: test   
   script:
-    - cd backend/internal/services/implementation
+    - cd backend 
+    - go mod init backend
+    - go mod tidy
+    - cd internal/services/implementation
     - go test client_test.go client.go -v -cover -coverprofile=client.out
     - go test record.go record_test.go -v -cover -coverprofile=record.out
     - go test pet_test.go pet.go -v -cover -coverprofile=pet.out
