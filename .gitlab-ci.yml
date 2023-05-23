@@ -52,7 +52,10 @@ unit-test-job:
     - go test doctor.go doctor_test.go -v -cover  -coverprofile=doctor.out
   artifacts:
     paths:
-      - coverprofile
+      - backend/internal/services/implementation/client.out
+      - backend/internal/services/implementation/record.out
+      - backend/internal/services/implementation/pet.out
+      - backend/internal/services/implementation/doctor.out
     expire_in: 1 hour
   needs:
     - test-build-job
@@ -67,11 +70,14 @@ db-test-job:
 build-job:    
   stage: build
   script:
-    - cd backend/cmd
+    - cd backend 
+    - go mod init backend
+    - go mod tidy
+    - cd cmd
     - go build main.go
   artifacts:
     paths:
-      - build
+      - backend/cmd/main
     expire_in: 1 hour
   needs:
     - unit-test-job
