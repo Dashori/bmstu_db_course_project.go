@@ -69,9 +69,8 @@ db-test-job:
     - go mod init backend
     - go mod tidy
     - cd internal/services/implementation
-    - go test recordPostgres_test.go config_for_test.go record.go record_test.go petPostgres_test.go pe
-t.go -v -cover -coverprofile=db.out
-   artifacts:
+    - go test recordPostgres_test.go config_for_test.go record.go record_test.go petPostgres_test.go pet.go -v -cover -coverprofile=db.out
+  artifacts:
     paths:
       - backend/internal/services/implementation/db.out
     expire_in: 1 hour
