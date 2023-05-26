@@ -2,7 +2,9 @@ package postgres_repo
 
 import (
 	"backend/internal/models"
+	"context"
 	"github.com/stretchr/testify/require"
+	"github.com/testcontainers/testcontainers-go"
 	"testing"
 	"time"
 )
@@ -29,17 +31,26 @@ var testRecordPostgresRepositoryCreateSuccess = []struct {
 }
 
 func TestRecordPostgresRepositoryGetDoctor(t *testing.T) {
+	dbContainer, db := SetupTestDatabase()
+	defer func(dbContainer testcontainers.Container, ctx context.Context) {
+		err := dbContainer.Terminate(ctx)
+		if err != nil {
+			return
+		}
+	}(dbContainer, context.Background())
+
 	for _, tt := range testRecordPostgresRepositoryCreateSuccess {
 		tt := tt
 		t.Run(tt.TestName, func(t *testing.T) {
-			fields, err := CreatePostgresRepositoryFieldsTest(configFileName, pathToConfig)
+			fields := PostgresRepositoryFields{DB: db}
+			// fields, err := CreatePostgresRepositoryFieldsTest(configFileName, pathToConfig)
 
-			recordRepository := CreateRecordPostgresRepository(fields)
-			clientRepository := CreateClientPostgresRepository(fields)
-			doctorRepository := CreateDoctorPostgresRepository(fields)
-			petRepository := CreatePetPostgresRepository(fields)
+			recordRepository := CreateRecordPostgresRepository(&fields)
+			clientRepository := CreateClientPostgresRepository(&fields)
+			doctorRepository := CreateDoctorPostgresRepository(&fields)
+			petRepository := CreatePetPostgresRepository(&fields)
 
-			err = clientRepository.Create(&models.Client{Login: "ChicagoTest", Password: "12345"})
+			err := clientRepository.Create(&models.Client{Login: "ChicagoTest", Password: "12345"})
 			tt.CheckOutputHelp(t, err)
 
 			client, err := clientRepository.GetClientByLogin("ChicagoTest")

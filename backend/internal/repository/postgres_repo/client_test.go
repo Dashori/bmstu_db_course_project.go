@@ -2,7 +2,9 @@ package postgres_repo
 
 import (
 	"backend/internal/models"
+	"context"
 	"github.com/stretchr/testify/require"
+	"github.com/testcontainers/testcontainers-go"
 	"testing"
 )
 
@@ -45,14 +47,23 @@ var testClientPostgresRepositoryCreateFailure = []struct {
 }
 
 func TestClientPostgresRepositoryCreate(t *testing.T) {
+	dbContainer, db := SetupTestDatabase()
+	defer func(dbContainer testcontainers.Container, ctx context.Context) {
+		err := dbContainer.Terminate(ctx)
+		if err != nil {
+			return
+		}
+	}(dbContainer, context.Background())
+
 	for _, tt := range testClientPostgresRepositoryCreateSuccess {
 		tt := tt
 		t.Run(tt.TestName, func(t *testing.T) {
-			fields, err := CreatePostgresRepositoryFieldsTest(configFileName, pathToConfig)
+			fields := PostgresRepositoryFields{DB: db}
+			// fields, err := CreatePostgresRepositoryFieldsTest(configFileName, pathToConfig)
 
-			clientRepository := CreateClientPostgresRepository(fields)
+			clientRepository := CreateClientPostgresRepository(&fields)
 
-			err = clientRepository.Create(tt.InputData.client)
+			err := clientRepository.Create(tt.InputData.client)
 
 			tt.CheckOutput(t, err)
 
@@ -69,15 +80,16 @@ func TestClientPostgresRepositoryCreate(t *testing.T) {
 	for _, tt := range testClientPostgresRepositoryCreateFailure {
 		tt := tt
 		t.Run(tt.TestName, func(t *testing.T) {
-			fields, err := CreatePostgresRepositoryFieldsTest(configFileName, pathToConfig)
+			// fields, err := CreatePostgresRepositoryFieldsTest(configFileName, pathToConfig)
+			fields := PostgresRepositoryFields{DB: db}
 
-			clientRepository := CreateClientPostgresRepository(fields)
+			clientRepository := CreateClientPostgresRepository(&fields)
 
 			clientRepository.Create(tt.InputData.client)
 
 			clientRepository.Create(tt.InputData.client)
 
-			err = clientRepository.Create(tt.InputData.client)
+			err := clientRepository.Create(tt.InputData.client)
 
 			tt.CheckOutput(t, err)
 

@@ -8,7 +8,7 @@ variables:
 services:
   - docker:dind
 
-stages:          # List of stages for jobs, and their order of execution
+stages: 
   - pre
   - linter
   - image
@@ -38,7 +38,7 @@ module-build-job:
   # needs:
   #   - image-job
 
-unit-test-job:  
+bl-unit-test-job:  
   stage: test   
   script:
     - cd backend 
@@ -59,7 +59,23 @@ unit-test-job:
   needs:
     - module-build-job
 
-db-test-job:  
+db-unit-test-job:  
+  stage: test   
+  script:
+    - cd backend 
+    - go mod init backend
+    - go mod tidy
+    - cd internal/services/implementation
+    - go test -v -cover -coverprofile=DB.out
+  artifacts:
+    paths:
+      - backend/internal/services/implementation/unitDB.out
+    expire_in: 1 hour
+  needs:
+    - module-build-job
+
+
+bl-db-test-job:  
   stage: test   
   script:
     - cd backend 
@@ -75,6 +91,9 @@ db-test-job:
     expire_in: 1 hour
   needs:
     - module-build-job
+    - bl-unit-test-job
+    - db-unit-test-job
+
 
 build-job:    
   stage: build
@@ -89,8 +108,9 @@ build-job:
       - backend/cmd/main
     expire_in: 1 hour
   needs:
-    - unit-test-job
-    - db-test-job
+    - bl-unit-test-job
+    - db-unit-test-job
+    - bl-db-test-job
 
 
 

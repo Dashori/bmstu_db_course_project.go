@@ -2,7 +2,9 @@ package postgres_repo
 
 import (
 	"backend/internal/models"
+	"context"
 	"github.com/stretchr/testify/require"
+	"github.com/testcontainers/testcontainers-go"
 	"testing"
 )
 
@@ -30,14 +32,23 @@ var testDoctorPostgresRepositoryCreateSuccess = []struct {
 }
 
 func TestDoctorPostgresRepositoryCreate(t *testing.T) {
+	dbContainer, db := SetupTestDatabase()
+	defer func(dbContainer testcontainers.Container, ctx context.Context) {
+		err := dbContainer.Terminate(ctx)
+		if err != nil {
+			return
+		}
+	}(dbContainer, context.Background())
+
 	for _, tt := range testDoctorPostgresRepositoryCreateSuccess {
 		tt := tt
 		t.Run(tt.TestName, func(t *testing.T) {
-			fields, err := CreatePostgresRepositoryFieldsTest(configFileName, pathToConfig)
+			// fields, err := CreatePostgresRepositoryFieldsTest(configFileName, pathToConfig)
+			fields := PostgresRepositoryFields{DB: db}
 
-			doctorRepository := CreateDoctorPostgresRepository(fields)
+			doctorRepository := CreateDoctorPostgresRepository(&fields)
 
-			err = doctorRepository.Create(tt.InputData.doctor)
+			err := doctorRepository.Create(tt.InputData.doctor)
 
 			tt.CheckOutput(t, err)
 
@@ -80,14 +91,23 @@ var testDoctorPostgresRepositoryGetId = []struct {
 }
 
 func TestDoctorPostgresRepositoryGetId(t *testing.T) {
+	dbContainer, db := SetupTestDatabase()
+	defer func(dbContainer testcontainers.Container, ctx context.Context) {
+		err := dbContainer.Terminate(ctx)
+		if err != nil {
+			return
+		}
+	}(dbContainer, context.Background())
+
 	for _, tt := range testDoctorPostgresRepositoryGetId {
 		tt := tt
 		t.Run(tt.TestName, func(t *testing.T) {
-			fields, err := CreatePostgresRepositoryFieldsTest(configFileName, pathToConfig)
+			// fields, err := CreatePostgresRepositoryFieldsTest(configFileName, pathToConfig)
+			fields := PostgresRepositoryFields{DB: db}
 
-			doctorRepository := CreateDoctorPostgresRepository(fields)
+			doctorRepository := CreateDoctorPostgresRepository(&fields)
 
-			err = doctorRepository.Create(tt.InputData.doctor)
+			err := doctorRepository.Create(tt.InputData.doctor)
 
 			tt.CheckOutputHelp(t, err)
 
