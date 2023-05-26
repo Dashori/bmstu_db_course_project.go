@@ -1,13 +1,13 @@
 {
     "postgres": {
-      "host": "postgres",
+      "host": "127.0.0.1",
       "user": "dashori",
       "password": "parasha",
       "port": "5432",
       "dbname": "postgres"
     },
 
-    "mode" : "api",
+    "mode" : "tech",
     "loglevel": "info",
     "logfile" : "info.log",
     "port": ":8080",

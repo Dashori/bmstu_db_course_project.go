@@ -11,10 +11,14 @@ import (
 )
 
 type RecordPostgres struct {
-	RecordId      uint64    `db:"id_record"`
-	PetId         uint64    `db:"id_pet"`
-	ClientId      uint64    `db:"id_client"`
-	DoctorId      uint64    `db:"id_doctor"`
+	RecordId    uint64 `db:"id_record"`
+	PetId       uint64 `db:"id_pet"`
+	PetName     string `db:"pet_name"`
+	ClientId    uint64 `db:"id_client"`
+	ClientLogin string `db:"client_login"`
+	DoctorId    uint64 `db:"id_doctor"`
+	DoctorLogin string `db:"doctor_login"`
+
 	DatetimeStart time.Time `db:"time_start"`
 	DatetimeEnd   time.Time `db:"time_end"`
 }
@@ -43,6 +47,7 @@ func (r *RecordPostgresRepository) Create(record *models.Record) error {
 func copyRecord(r RecordPostgres) models.Record {
 	record := models.Record{RecordId: r.RecordId, PetId: r.PetId,
 		ClientId: r.ClientId, DoctorId: r.DoctorId,
+		DoctorLogin: r.DoctorLogin, ClientLogin: r.ClientLogin, PetName: r.PetName,
 
 		DatetimeStart: time.Date(
 			r.DatetimeStart.Year(),
@@ -86,7 +91,15 @@ func (r *RecordPostgresRepository) GetRecord(id uint64) (*models.Record, error) 
 }
 
 func (r *RecordPostgresRepository) GetAllByClient(id uint64) ([]models.Record, error) {
-	query := `select * from records where id_client = $1;`
+	query := `select r.id_record, d.id_doctor, d.login as doctor_login,
+	r.id_client, с.login as client_login,
+	r.id_pet, p.name as pet_name,
+	r.time_start, r.time_end from records r
+	join clients с on r.id_client = с.id_client
+	join doctors d on r.id_doctor = d.id_doctor
+	join pets p on r.id_pet = p.id_pet
+	where r.id_client = $1`
+
 	var recordsPostgres = []RecordPostgres{}
 	err := r.db.Select(&recordsPostgres, query, id)
 
@@ -109,7 +122,15 @@ func (r *RecordPostgresRepository) GetAllByClient(id uint64) ([]models.Record, e
 }
 
 func (r *RecordPostgresRepository) GetAllByDoctor(id uint64) ([]models.Record, error) {
-	query := `select * from records where id_doctor = $1`
+	query := `select r.id_record, d.id_doctor, d.login as doctor_login,
+	r.id_client, с.login as client_login,
+	r.id_pet, p.name as pet_name,
+	r.time_start, r.time_end from records r
+	join clients с on r.id_client = с.id_client
+	join doctors d on r.id_doctor = d.id_doctor
+	join pets p on r.id_pet = p.id_pet
+	where r.id_doctor = $1`
+
 	var recordsPostgres []RecordPostgres
 	err := r.db.Select(&recordsPostgres, query, id)
 
@@ -132,7 +153,14 @@ func (r *RecordPostgresRepository) GetAllByDoctor(id uint64) ([]models.Record, e
 }
 
 func (r *RecordPostgresRepository) GetAllRecordFilter(doctorId uint64, clientId uint64) ([]models.Record, error) {
-	query := `select * from records where records.id_doctor = $1 and records.id_client = $2;`
+	query := `select r.id_record, d.id_doctor, d.login as doctor_login,
+	r.id_client, с.login as client_login,
+	r.id_pet, p.name as pet_name,
+	r.time_start, r.time_end from records r
+	join clients с on r.id_client = с.id_client
+	join doctors d on r.id_doctor = d.id_doctor
+	join pets p on r.id_pet = p.id_pet
+	where r.id_doctor = $1 and r.id_client = $2`
 
 	var recordsPostgres []RecordPostgres
 	err := r.db.Select(&recordsPostgres, query, doctorId, clientId)

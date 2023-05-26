@@ -16,12 +16,12 @@ func printRecords(records []models.Record) {
 	// minwidth, tabwidth, padding, padchar, flags
 	w.Init(os.Stdout, 9, 8, 0, '\t', 0)
 
-	fmt.Fprintf(w, "\n %s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
-		"№", "Id записи", "Питомец", "Клиент", "Год", "Месяц", "День", "Начало", "Конец")
+	fmt.Fprintf(w, "\n %s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t\t%s\t%s\n",
+		"№", "Id записи", "ID питомец", "Кличка", "ID клиент", "Логин", "Год", "Месяц", "День", "Начало", "Конец")
 
 	for i, r := range records {
-		fmt.Fprintf(w, "\n %d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n",
-			i+1, r.RecordId, r.PetId, r.ClientId, r.DatetimeStart.Year(), r.DatetimeStart.Month(),
+		fmt.Fprintf(w, "\n %d\t%d\t%d\t%s\t%d\t%s\t%d\t%d\t%d\t%d\t%d\n",
+			i+1, r.RecordId, r.PetId, r.PetName, r.ClientId, r.ClientLogin, r.DatetimeStart.Year(), r.DatetimeStart.Month(),
 			r.DatetimeStart.Day(), r.DatetimeStart.Hour(),
 			r.DatetimeEnd.Hour())
 	}
