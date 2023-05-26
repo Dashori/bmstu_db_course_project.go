@@ -5,18 +5,15 @@ import (
 	"backend/internal/repository"
 	"backend/internal/repository/postgres_repo"
 	"backend/internal/services"
+	"context"
+	"database/sql"
 	"github.com/charmbracelet/log"
 	"github.com/stretchr/testify/require"
-	"os"
-	"database/sql"
-	"testing"
-	// "fmt"
-	"context"
-	"time"
 	"github.com/testcontainers/testcontainers-go"
+	"os"
+	"testing"
+	"time"
 )
-	// "github.com/testcontainers/testcontainers-go"
-    // "github.com/testcontainers/testcontainers-go/wait")
 
 type recordServiceFieldsPostgres struct {
 	recordRepository *repository.RecordRepository
@@ -29,13 +26,7 @@ type recordServiceFieldsPostgres struct {
 func createRecordServiceFieldsPostgres(dbTest *sql.DB) *recordServiceFieldsPostgres {
 	fields := new(recordServiceFieldsPostgres)
 
-	// repositoryFields, err := postgres_repo.CreatePostgresRepositoryFieldsTest(configFileName, pathToConfig)
-
-	// if err != nil {
-	// 	return nil
-	// }
-
-	repositoryFields := postgres_repo.PostgresRepositoryFields{DB : dbTest}
+	repositoryFields := postgres_repo.PostgresRepositoryFields{DB: dbTest}
 
 	recordRepo := postgres_repo.CreateRecordPostgresRepository(&repositoryFields)
 	fields.recordRepository = &recordRepo
@@ -105,12 +96,11 @@ func TestRecordServiceImplementationCreatePostgres(t *testing.T) {
 
 	dbContainer, db := SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
-	 err := dbContainer.Terminate(ctx)
-	 if err != nil {
-	  return
-	 }
+		err := dbContainer.Terminate(ctx)
+		if err != nil {
+			return
+		}
 	}(dbContainer, context.Background())
-
 
 	for _, tt := range testRecordCreatePostgresSuccess {
 		tt := tt
