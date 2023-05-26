@@ -1,192 +1,210 @@
 package servicesImplementation
 
-// import (
-// 	"backend/internal/models"
-// 	"backend/internal/repository"
-// 	"backend/internal/repository/postgres_repo"
-// 	"backend/internal/services"
-// 	"github.com/charmbracelet/log"
-// 	"github.com/stretchr/testify/require"
-// 	"os"
-// 	"testing"
-// 	"time"
-// )
+import (
+	"backend/internal/models"
+	"backend/internal/repository"
+	"backend/internal/repository/postgres_repo"
+	"backend/internal/services"
+	"github.com/charmbracelet/log"
+	"github.com/stretchr/testify/require"
+	"os"
+	"database/sql"
+	"testing"
+	// "fmt"
+	"context"
+	"time"
+	"github.com/testcontainers/testcontainers-go"
+)
+	// "github.com/testcontainers/testcontainers-go"
+    // "github.com/testcontainers/testcontainers-go/wait")
 
-// type recordServiceFieldsPostgres struct {
-// 	recordRepository *repository.RecordRepository
-// 	doctorRepository *repository.DoctorRepository
-// 	clientRepository *repository.ClientRepository
-// 	petRepository    *repository.PetRepository
-// 	logger           *log.Logger
-// }
+type recordServiceFieldsPostgres struct {
+	recordRepository *repository.RecordRepository
+	doctorRepository *repository.DoctorRepository
+	clientRepository *repository.ClientRepository
+	petRepository    *repository.PetRepository
+	logger           *log.Logger
+}
 
-// func createRecordServiceFieldsPostgres() *recordServiceFieldsPostgres {
-// 	fields := new(recordServiceFieldsPostgres)
+func createRecordServiceFieldsPostgres(dbTest *sql.DB) *recordServiceFieldsPostgres {
+	fields := new(recordServiceFieldsPostgres)
 
-// 	repositoryFields, err := postgres_repo.CreatePostgresRepositoryFieldsTest(configFileName, pathToConfig)
+	// repositoryFields, err := postgres_repo.CreatePostgresRepositoryFieldsTest(configFileName, pathToConfig)
 
-// 	if err != nil {
-// 		return nil
-// 	}
+	// if err != nil {
+	// 	return nil
+	// }
 
-// 	recordRepo := postgres_repo.CreateRecordPostgresRepository(repositoryFields)
-// 	fields.recordRepository = &recordRepo
+	repositoryFields := postgres_repo.PostgresRepositoryFields{DB : dbTest}
 
-// 	doctorRepo := postgres_repo.CreateDoctorPostgresRepository(repositoryFields)
-// 	fields.doctorRepository = &doctorRepo
+	recordRepo := postgres_repo.CreateRecordPostgresRepository(&repositoryFields)
+	fields.recordRepository = &recordRepo
 
-// 	clientRepo := postgres_repo.CreateClientPostgresRepository(repositoryFields)
-// 	fields.clientRepository = &clientRepo
+	doctorRepo := postgres_repo.CreateDoctorPostgresRepository(&repositoryFields)
+	fields.doctorRepository = &doctorRepo
 
-// 	petRepo := postgres_repo.CreatePetPostgresRepository(repositoryFields)
-// 	fields.petRepository = &petRepo
+	clientRepo := postgres_repo.CreateClientPostgresRepository(&repositoryFields)
+	fields.clientRepository = &clientRepo
 
-// 	fields.logger = log.New(os.Stderr)
-// 	fields.logger.SetLevel(log.FatalLevel)
+	petRepo := postgres_repo.CreatePetPostgresRepository(&repositoryFields)
+	fields.petRepository = &petRepo
 
-// 	return fields
-// }
+	fields.logger = log.New(os.Stderr)
+	fields.logger.SetLevel(log.FatalLevel)
 
-// func createRecordServicePostgres(fields *recordServiceFieldsPostgres) services.RecordService {
-// 	return NewRecordServiceImplementation(*fields.recordRepository, *fields.doctorRepository,
-// 		*fields.clientRepository, *fields.petRepository, fields.logger)
-// }
+	return fields
+}
 
-// var testRecordCreatePostgresSuccess = []struct {
-// 	TestName        string
-// 	InputData       struct{}
-// 	Prepare         func(fields *recordServiceFieldsPostgres)
-// 	CheckOutput     func(t *testing.T, err error)
-// 	CheckOutputHelp func(t *testing.T, err error)
-// }{
-// 	{
-// 		TestName:  "record creare and delete success",
-// 		InputData: struct{}{},
+func createRecordServicePostgres(fields *recordServiceFieldsPostgres) services.RecordService {
+	return NewRecordServiceImplementation(*fields.recordRepository, *fields.doctorRepository,
+		*fields.clientRepository, *fields.petRepository, fields.logger)
+}
 
-// 		CheckOutput: func(t *testing.T, err error) {
-// 			require.NoError(t, err)
-// 		},
+var testRecordCreatePostgresSuccess = []struct {
+	TestName        string
+	InputData       struct{}
+	Prepare         func(fields *recordServiceFieldsPostgres)
+	CheckOutput     func(t *testing.T, err error)
+	CheckOutputHelp func(t *testing.T, err error)
+}{
+	{
+		TestName:  "record creare and delete success",
+		InputData: struct{}{},
 
-// 		CheckOutputHelp: func(t *testing.T, err error) {
-// 			require.NoError(t, err)
-// 		},
-// 	},
-// }
+		CheckOutput: func(t *testing.T, err error) {
+			require.NoError(t, err)
+		},
 
-// var testRecordCreatePostgresFailure = []struct {
-// 	TestName        string
-// 	InputData       struct{}
-// 	Prepare         func(fields *recordServiceFields)
-// 	CheckOutput     func(t *testing.T, err error)
-// 	CheckOutputHelp func(t *testing.T, err error)
-// }{
-// 	{
-// 		TestName:  "record create failure",
-// 		InputData: struct{}{},
+		CheckOutputHelp: func(t *testing.T, err error) {
+			require.NoError(t, err)
+		},
+	},
+}
 
-// 		CheckOutput: func(t *testing.T, err error) {
-// 			require.Error(t, err)
-// 		},
-// 		CheckOutputHelp: func(t *testing.T, err error) {
-// 			require.NoError(t, err)
-// 		},
-// 	},
-// }
+var testRecordCreatePostgresFailure = []struct {
+	TestName        string
+	InputData       struct{}
+	Prepare         func(fields *recordServiceFields)
+	CheckOutput     func(t *testing.T, err error)
+	CheckOutputHelp func(t *testing.T, err error)
+}{
+	{
+		TestName:  "record create failure",
+		InputData: struct{}{},
 
-// func TestRecordServiceImplementationCreatePostgres(t *testing.T) {
-// 	for _, tt := range testRecordCreatePostgresSuccess {
-// 		tt := tt
-// 		t.Run(tt.TestName, func(t *testing.T) {
-// 			fields := createRecordServiceFieldsPostgres()
-// 			records := createRecordServicePostgres(fields)
+		CheckOutput: func(t *testing.T, err error) {
+			require.Error(t, err)
+		},
+		CheckOutputHelp: func(t *testing.T, err error) {
+			require.NoError(t, err)
+		},
+	},
+}
 
-// 			clients := fields.clientRepository
-// 			doctors := fields.doctorRepository
-// 			pets := fields.petRepository
+func TestRecordServiceImplementationCreatePostgres(t *testing.T) {
 
-// 			err := (*clients).Create(&models.Client{Login: "ChicagoTest", Password: "12345"})
-// 			tt.CheckOutputHelp(t, err)
+	dbContainer, db := SetupTestDatabase()
+	defer func(dbContainer testcontainers.Container, ctx context.Context) {
+	 err := dbContainer.Terminate(ctx)
+	 if err != nil {
+	  return
+	 }
+	}(dbContainer, context.Background())
 
-// 			client, err := (*clients).GetClientByLogin("ChicagoTest")
-// 			tt.CheckOutputHelp(t, err)
 
-// 			err = (*pets).Create(&models.Pet{Name: "Havrosha", Type: "cat", Age: 1, Health: 10, ClientId: client.ClientId})
-// 			tt.CheckOutputHelp(t, err)
+	for _, tt := range testRecordCreatePostgresSuccess {
+		tt := tt
+		t.Run(tt.TestName, func(t *testing.T) {
+			fields := createRecordServiceFieldsPostgres(db)
+			records := createRecordServicePostgres(fields)
 
-// 			err = (*doctors).Create(&models.Doctor{Login: "ChicagoTest", Password: "12345", StartTime: 10, EndTime: 23})
-// 			tt.CheckOutputHelp(t, err)
+			clients := fields.clientRepository
+			doctors := fields.doctorRepository
+			pets := fields.petRepository
 
-// 			doctor, err := (*doctors).GetDoctorByLogin("ChicagoTest")
-// 			tt.CheckOutputHelp(t, err)
+			err := (*clients).Create(&models.Client{Login: "ChicagoTest", Password: "12345"})
+			tt.CheckOutputHelp(t, err)
 
-// 			// трюк чтоб узнать id питомца Havrosha
-// 			clientPets, err := (*pets).GetAllByClient(client.ClientId)
-// 			tt.CheckOutputHelp(t, err)
-// 			petId := clientPets[0].PetId
+			client, err := (*clients).GetClientByLogin("ChicagoTest")
+			tt.CheckOutputHelp(t, err)
 
-// 			err = records.CreateRecord(&models.Record{
-// 				PetId: petId, ClientId: client.ClientId, DoctorId: doctor.DoctorId,
-// 				DatetimeStart: time.Date(3000, 8, 15, 14, 00, 00, 00, time.UTC),
-// 				DatetimeEnd:   time.Date(3000, 8, 15, 15, 00, 00, 00, time.UTC)})
+			err = (*pets).Create(&models.Pet{Name: "Havrosha", Type: "cat", Age: 1, Health: 10, ClientId: client.ClientId})
+			tt.CheckOutputHelp(t, err)
 
-// 			tt.CheckOutput(t, err)
+			err = (*doctors).Create(&models.Doctor{Login: "ChicagoTest", Password: "12345", StartTime: 10, EndTime: 23})
+			tt.CheckOutputHelp(t, err)
 
-// 			err = (*pets).Delete(petId) // при удалении pet удалится и запись в records
-// 			tt.CheckOutputHelp(t, err)
+			doctor, err := (*doctors).GetDoctorByLogin("ChicagoTest")
+			tt.CheckOutputHelp(t, err)
 
-// 			err = (*doctors).Delete(doctor.DoctorId)
-// 			tt.CheckOutputHelp(t, err)
+			// трюк чтоб узнать id питомца Havrosha
+			clientPets, err := (*pets).GetAllByClient(client.ClientId)
+			tt.CheckOutputHelp(t, err)
+			petId := clientPets[0].PetId
 
-// 			err = (*clients).Delete(client.ClientId)
-// 			tt.CheckOutputHelp(t, err)
-// 		})
-// 	}
+			err = records.CreateRecord(&models.Record{
+				PetId: petId, ClientId: client.ClientId, DoctorId: doctor.DoctorId,
+				DatetimeStart: time.Date(3000, 8, 15, 14, 00, 00, 00, time.UTC),
+				DatetimeEnd:   time.Date(3000, 8, 15, 15, 00, 00, 00, time.UTC)})
 
-// 	for _, tt := range testRecordCreatePostgresFailure {
-// 		tt := tt
-// 		t.Run(tt.TestName, func(t *testing.T) {
-// 			fields := createRecordServiceFieldsPostgres()
-// 			records := createRecordServicePostgres(fields)
+			tt.CheckOutput(t, err)
 
-// 			clients := fields.clientRepository
-// 			doctors := fields.doctorRepository
-// 			pets := fields.petRepository
+			err = (*pets).Delete(petId) // при удалении pet удалится и запись в records
+			tt.CheckOutputHelp(t, err)
 
-// 			err := (*clients).Create(&models.Client{Login: "ChicagoTest", Password: "12345"})
-// 			tt.CheckOutputHelp(t, err)
+			err = (*doctors).Delete(doctor.DoctorId)
+			tt.CheckOutputHelp(t, err)
 
-// 			client, err := (*clients).GetClientByLogin("ChicagoTest")
-// 			tt.CheckOutputHelp(t, err)
+			err = (*clients).Delete(client.ClientId)
+			tt.CheckOutputHelp(t, err)
+		})
+	}
 
-// 			err = (*pets).Create(&models.Pet{Name: "Havrosha", Type: "cat", Age: 1, Health: 10, ClientId: client.ClientId})
-// 			tt.CheckOutputHelp(t, err)
+	for _, tt := range testRecordCreatePostgresFailure {
+		tt := tt
+		t.Run(tt.TestName, func(t *testing.T) {
+			fields := createRecordServiceFieldsPostgres(db)
+			records := createRecordServicePostgres(fields)
 
-// 			err = (*doctors).Create(&models.Doctor{Login: "ChicagoTest", Password: "12345", StartTime: 10, EndTime: 23})
-// 			tt.CheckOutputHelp(t, err)
+			clients := fields.clientRepository
+			doctors := fields.doctorRepository
+			pets := fields.petRepository
 
-// 			doctor, err := (*doctors).GetDoctorByLogin("ChicagoTest")
-// 			tt.CheckOutputHelp(t, err)
+			err := (*clients).Create(&models.Client{Login: "ChicagoTest", Password: "12345"})
+			tt.CheckOutputHelp(t, err)
 
-// 			// трюк чтоб узнать id питомца Havrosha
-// 			clientPets, err := (*pets).GetAllByClient(client.ClientId)
-// 			tt.CheckOutputHelp(t, err)
-// 			petId := clientPets[0].PetId
+			client, err := (*clients).GetClientByLogin("ChicagoTest")
+			tt.CheckOutputHelp(t, err)
 
-// 			err = records.CreateRecord(&models.Record{
-// 				PetId: petId, ClientId: client.ClientId, DoctorId: doctor.DoctorId,
-// 				DatetimeStart: time.Date(3000, 8, 15, 16, 00, 00, 00, time.UTC),
-// 				DatetimeEnd:   time.Date(3000, 8, 15, 15, 00, 00, 00, time.UTC)})
+			err = (*pets).Create(&models.Pet{Name: "Havrosha", Type: "cat", Age: 1, Health: 10, ClientId: client.ClientId})
+			tt.CheckOutputHelp(t, err)
 
-// 			tt.CheckOutput(t, err)
+			err = (*doctors).Create(&models.Doctor{Login: "ChicagoTest", Password: "12345", StartTime: 10, EndTime: 23})
+			tt.CheckOutputHelp(t, err)
 
-// 			err = (*pets).Delete(petId) // при удалении pet удалится и запись в records
-// 			tt.CheckOutputHelp(t, err)
+			doctor, err := (*doctors).GetDoctorByLogin("ChicagoTest")
+			tt.CheckOutputHelp(t, err)
 
-// 			err = (*doctors).Delete(doctor.DoctorId)
-// 			tt.CheckOutputHelp(t, err)
+			// трюк чтоб узнать id питомца Havrosha
+			clientPets, err := (*pets).GetAllByClient(client.ClientId)
+			tt.CheckOutputHelp(t, err)
+			petId := clientPets[0].PetId
 
-// 			err = (*clients).Delete(client.ClientId)
-// 			tt.CheckOutputHelp(t, err)
-// 		})
-// 	}
-// }
+			err = records.CreateRecord(&models.Record{
+				PetId: petId, ClientId: client.ClientId, DoctorId: doctor.DoctorId,
+				DatetimeStart: time.Date(3000, 8, 15, 16, 00, 00, 00, time.UTC),
+				DatetimeEnd:   time.Date(3000, 8, 15, 15, 00, 00, 00, time.UTC)})
+
+			tt.CheckOutput(t, err)
+
+			err = (*pets).Delete(petId) // при удалении pet удалится и запись в records
+			tt.CheckOutputHelp(t, err)
+
+			err = (*doctors).Delete(doctor.DoctorId)
+			tt.CheckOutputHelp(t, err)
+
+			err = (*clients).Delete(client.ClientId)
+			tt.CheckOutputHelp(t, err)
+		})
+	}
+}

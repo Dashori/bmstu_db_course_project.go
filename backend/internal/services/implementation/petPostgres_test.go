@@ -9,6 +9,11 @@ import (
 	"github.com/stretchr/testify/require"
 	"os"
 	"testing"
+	"github.com/testcontainers/testcontainers-go"
+	"database/sql"
+	"fmt"
+	"context"
+    "github.com/testcontainers/testcontainers-go/wait"
 )
 
 type petServiceFieldsPostgres struct {
@@ -17,19 +22,78 @@ type petServiceFieldsPostgres struct {
 	logger           *log.Logger
 }
 
-func createPetServiceFieldsPostgres() *petServiceFieldsPostgres {
-	fields := new(petServiceFieldsPostgres)
 
-	repositoryFields, err := postgres_repo.CreatePostgresRepositoryFieldsTest(configFileName, pathToConfig)
-
+const (
+	USER     = "dashori"
+	PASSWORD = "parasha"
+	DBNAME   = "postgres"
+)
+   
+func SetupTestDatabase() (testcontainers.Container, *sql.DB) {
+	containerReq := testcontainers.ContainerRequest{
+	 Image:        "postgres:latest",
+	 ExposedPorts: []string{"5432/tcp"},
+	 WaitingFor:   wait.ForListeningPort("5432/tcp"),
+	 Env: map[string]string{
+	  "POSTGRES_DB":       DBNAME,
+	  "POSTGRES_PASSWORD": PASSWORD,
+	  "POSTGRES_USER":     USER,
+	 },
+	}
+   
+	dbContainer, _ := testcontainers.GenericContainer(
+	 context.Background(),
+	 testcontainers.GenericContainerRequest{
+	  ContainerRequest: containerReq,
+	  Started:          true,
+	 })
+   
+	host, _ := dbContainer.Host(context.Background())
+	port, _ := dbContainer.MappedPort(context.Background(), "5432")
+   
+	dsnPGConn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port.Int(), USER, PASSWORD, DBNAME)
+	db, err := sql.Open("pgx", dsnPGConn)
 	if err != nil {
-		return nil
+	 return dbContainer, nil
+	}
+   
+	err = db.Ping()
+	if err != nil {
+	 return dbContainer, nil
+	}
+	db.SetMaxOpenConns(10)
+   
+	text, err := os.ReadFile("../../../db/postgreSQL/init.sql")
+	if err != nil {
+	 return dbContainer, nil
 	}
 
-	petRepo := postgres_repo.CreatePetPostgresRepository(repositoryFields)
+	fmt.Println(string(text))
+   
+	if _, err := db.Exec(string(text)); err != nil {
+	 return dbContainer, nil
+	}
+
+	fmt.Println(" ALL IS OK ")
+   
+	return dbContainer, db
+}
+
+func createPetServiceFieldsPostgres(dbTest *sql.DB) *petServiceFieldsPostgres {
+	fields := new(petServiceFieldsPostgres)
+
+	// repositoryFields, err := postgres_repo.CreatePostgresRepositoryFieldsTest(configFileName, pathToConfig)
+
+	// if err != nil {
+	// 	return nil
+	// }
+
+	repositoryFields := postgres_repo.PostgresRepositoryFields{DB : dbTest}
+
+	petRepo := postgres_repo.CreatePetPostgresRepository(&repositoryFields)
 	fields.petRepository = &petRepo
 
-	clientRepo := postgres_repo.CreateClientPostgresRepository(repositoryFields)
+	clientRepo := postgres_repo.CreateClientPostgresRepository(&repositoryFields)
 	fields.clientRepository = &clientRepo
 
 	fields.logger = log.New(os.Stderr)
@@ -82,47 +146,56 @@ var testPetCreatePostgresFailure = []struct {
 	},
 }
 
-// func TestPetServiceImplementationCreatePostgres(t *testing.T) {
-// 	for _, tt := range testPetCreatePostgresSuccess {
-// 		tt := tt
-// 		t.Run(tt.TestName, func(t *testing.T) {
-// 			fields := createRecordServiceFieldsPostgres()
+func TestPetServiceImplementationCreatePostgres(t *testing.T) {
 
-// 			clients := fields.clientRepository
-// 			pets := fields.petRepository
+	dbContainer, db := SetupTestDatabase()
+	defer func(dbContainer testcontainers.Container, ctx context.Context) {
+	 err := dbContainer.Terminate(ctx)
+	 if err != nil {
+	  return
+	 }
+	}(dbContainer, context.Background())
 
-// 			err := (*clients).Create(&models.Client{Login: "ChicagoTest", Password: "12345"})
-// 			tt.CheckOutputHelp(t, err)
+	for _, tt := range testPetCreatePostgresSuccess {
+		tt := tt
+		t.Run(tt.TestName, func(t *testing.T) {
+			fields := createRecordServiceFieldsPostgres(db)
 
-// 			client, err := (*clients).GetClientByLogin("ChicagoTest")
-// 			tt.CheckOutputHelp(t, err)
+			clients := fields.clientRepository
+			pets := fields.petRepository
 
-// 			err = (*pets).Create(&models.Pet{Name: "Havrosha", Type: "cat", Age: 1, Health: 10, ClientId: client.ClientId})
-// 			tt.CheckOutput(t, err)
+			err := (*clients).Create(&models.Client{Login: "ChicagoTest", Password: "12345"})
+			tt.CheckOutputHelp(t, err)
 
-// 			// трюк чтоб узнать id питомца Havrosha
-// 			clientPets, err := (*pets).GetAllByClient(client.ClientId)
-// 			tt.CheckOutputHelp(t, err)
-// 			petId := clientPets[0].PetId
+			client, err := (*clients).GetClientByLogin("ChicagoTest")
+			tt.CheckOutputHelp(t, err)
 
-// 			err = (*pets).Delete(petId)
-// 			tt.CheckOutputHelp(t, err)
+			err = (*pets).Create(&models.Pet{Name: "Havrosha", Type: "cat", Age: 1, Health: 10, ClientId: client.ClientId})
+			tt.CheckOutput(t, err)
 
-// 			err = (*clients).Delete(client.ClientId)
-// 			tt.CheckOutputHelp(t, err)
-// 		})
-// 	}
+			// трюк чтоб узнать id питомца Havrosha
+			clientPets, err := (*pets).GetAllByClient(client.ClientId)
+			tt.CheckOutputHelp(t, err)
+			petId := clientPets[0].PetId
 
-// 	for _, tt := range testPetCreatePostgresFailure {
-// 		tt := tt
-// 		t.Run(tt.TestName, func(t *testing.T) {
-// 			fields := createPetServiceFieldsPostgres()
+			err = (*pets).Delete(petId)
+			tt.CheckOutputHelp(t, err)
 
-// 			pet := createPetServicePostgres(fields)
+			err = (*clients).Delete(client.ClientId)
+			tt.CheckOutputHelp(t, err)
+		})
+	}
 
-// 			err := pet.Create(tt.InputData.pet, tt.InputData.login)
+	for _, tt := range testPetCreatePostgresFailure {
+		tt := tt
+		t.Run(tt.TestName, func(t *testing.T) {
+			fields := createPetServiceFieldsPostgres(db)
 
-// 			tt.CheckOutput(t, err)
-// 		})
-// 	}
-// }
+			pet := createPetServicePostgres(fields)
+
+			err := pet.Create(tt.InputData.pet, tt.InputData.login)
+
+			tt.CheckOutput(t, err)
+		})
+	}
+}

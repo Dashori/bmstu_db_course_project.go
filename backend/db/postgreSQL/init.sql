@@ -42,8 +42,3 @@ create table records
 	time_start timestamp,
 	time_end timestamp
 );
-
-
-SELECT *
-FROM pg_settings
-WHERE name = 'port';

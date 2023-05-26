@@ -9,6 +9,7 @@ import (
 	"github.com/charmbracelet/log"
 )
 
+
 type petServiceImplementation struct {
 	petRepository    repository.PetRepository
 	clientRepository repository.ClientRepository
