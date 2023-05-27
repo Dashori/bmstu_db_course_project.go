@@ -10,9 +10,9 @@ services:
 
 stages: 
   - pre
-  - linter
   - image
   - module_build
+  - linter
   - test
   - build
   - extra
