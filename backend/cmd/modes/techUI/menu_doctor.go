@@ -145,6 +145,11 @@ func doctorMenu(a *registry.AppServiceFields) error {
 		return cliErrors.ErrorInput
 	}
 
+	err = a.DoctorService.SetRole()
+	if err != nil {
+		return err
+	}
+
 	var doctor *models.Doctor
 	switch num {
 	case 0:

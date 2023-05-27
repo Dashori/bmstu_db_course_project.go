@@ -28,6 +28,13 @@ func NewDoctorServiceImplementation(
 	}
 }
 
+func (c *doctorServiceImplementation) SetRole() error {
+	err := c.doctorRepository.SetRole()
+
+	return err
+}
+
+
 func checkShedule(start uint64, end uint64) error {
 	if start >= end {
 		return serviceErrors.ErrorWrongNewShedule

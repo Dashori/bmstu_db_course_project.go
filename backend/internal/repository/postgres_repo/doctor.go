@@ -31,6 +31,18 @@ func NewDoctorPostgresRepository(db *sqlx.DB) repository.DoctorRepository {
 	return &DoctorPostgresRepository{db: db}
 }
 
+func (d *DoctorPostgresRepository) SetRole() error {
+	queryRole := `set role doctor;`
+	_, err := d.db.Exec(queryRole)
+
+	if err != nil {
+		return dbErrors.ErrorSetRole
+	}
+
+	return nil
+}
+
+
 func (d *DoctorPostgresRepository) Create(doctor *models.Doctor) error {
 	query := `insert into doctors(login, password, start_time, end_time) values($1, $2, $3, $4);`
 

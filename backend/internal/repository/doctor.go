@@ -3,6 +3,7 @@ package repository
 import "backend/internal/models"
 
 type DoctorRepository interface {
+	SetRole() error
 	Create(doctor *models.Doctor) error
 	GetDoctorByLogin(login string) (*models.Doctor, error)
 	GetDoctorById(id uint64) (*models.Doctor, error)

@@ -253,6 +253,11 @@ func clientMenu(a *registry.AppServiceFields) error {
 
 	var client *models.Client
 
+	err = a.ClientService.SetRole()
+	if err != nil {
+		return err
+	}
+
 	switch num {
 	case 0:
 		return nil

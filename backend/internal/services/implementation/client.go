@@ -29,6 +29,12 @@ func NewClientServiceImplementation(
 	}
 }
 
+func (c *clientServiceImplementation) SetRole() error {
+	err := c.clientRepository.SetRole()
+
+	return err
+}
+
 func (c *clientServiceImplementation) GetClientByLogin(login string) (*models.Client, error) {
 	client, err := c.clientRepository.GetClientByLogin(login)
 

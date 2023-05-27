@@ -72,3 +72,4 @@ func CreateRecordPostgresRepository(fields *PostgresRepositoryFields) repository
 
 	return NewRecordPostgresRepository(dbx)
 }
+
