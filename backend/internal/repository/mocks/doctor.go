@@ -107,6 +107,20 @@ func (mr *MockDoctorRepositoryMockRecorder) GetDoctorByLogin(login interface{}) 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDoctorByLogin", reflect.TypeOf((*MockDoctorRepository)(nil).GetDoctorByLogin), login)
 }
 
+// SetRole mocks base method.
+func (m *MockDoctorRepository) SetRole() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SetRole")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SetRole indicates an expected call of SetRole.
+func (mr *MockDoctorRepositoryMockRecorder) SetRole() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetRole", reflect.TypeOf((*MockDoctorRepository)(nil).SetRole))
+}
+
 // UpdateShedule mocks base method.
 func (m *MockDoctorRepository) UpdateShedule(id, newStart, newEnd uint64) error {
 	m.ctrl.T.Helper()

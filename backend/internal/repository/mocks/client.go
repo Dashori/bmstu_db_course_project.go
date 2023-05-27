@@ -106,3 +106,17 @@ func (mr *MockClientRepositoryMockRecorder) GetClientByLogin(login interface{}) 
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetClientByLogin", reflect.TypeOf((*MockClientRepository)(nil).GetClientByLogin), login)
 }
+
+// SetRole mocks base method.
+func (m *MockClientRepository) SetRole() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SetRole")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SetRole indicates an expected call of SetRole.
+func (mr *MockClientRepositoryMockRecorder) SetRole() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetRole", reflect.TypeOf((*MockClientRepository)(nil).SetRole))
+}
