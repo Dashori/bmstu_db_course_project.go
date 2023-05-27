@@ -20,7 +20,7 @@ stages:
 linter-job:
   stage: linter
   script:
-    - go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+    - go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.45.0
     - cd backend
     - golangci-lint run ./... >> linter.txt
   artifacts:
