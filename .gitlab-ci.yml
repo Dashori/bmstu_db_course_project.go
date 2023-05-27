@@ -17,11 +17,16 @@ stages:
   - build
   - extra
 
-# linter-job:
-#   stage: pre
-#   script:
-#     - echo "linter"
-  
+linter-job:
+  stage: pre
+  script:
+    - cd backend
+    - golangci-lint run ./... >> linter.txt
+  artifacts:
+    paths:
+      - backend/linter.txt
+    expire_in: 1 day
+
 # image-job:
 #   stage: image
 #   script:
@@ -35,8 +40,8 @@ module-build-job:
       - cd backend 
       - go mod init backend
       - go mod tidy
-  # needs:
-  #   - image-job
+  needs:
+    - linter-job
 
 bl-unit-test-job:  
   stage: test   
