@@ -8,7 +8,6 @@ import (
 	"database/sql"
 	"github.com/jinzhu/copier"
 	"github.com/jmoiron/sqlx"
-	"fmt"
 )
 
 type ClientPostgres struct {
@@ -36,7 +35,6 @@ func (c *ClientPostgresRepository) SetRole() error {
 	return nil
 }
 
-
 func (c *ClientPostgresRepository) Create(client *models.Client) error {
 	query := `insert into clients(login, password) values($1, $2);`
 
@@ -55,7 +53,6 @@ func (c *ClientPostgresRepository) GetClientByLogin(login string) (*models.Clien
 
 	err := c.db.Get(clientDB, query, login)
 
-	fmt.Println(err)
 	if err == sql.ErrNoRows {
 		return nil, repoErrors.EntityDoesNotExists
 	} else if err != nil {

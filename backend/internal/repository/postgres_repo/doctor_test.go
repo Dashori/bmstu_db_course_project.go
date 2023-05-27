@@ -43,22 +43,16 @@ func TestDoctorPostgresRepositoryCreate(t *testing.T) {
 	for _, tt := range testDoctorPostgresRepositoryCreateSuccess {
 		tt := tt
 		t.Run(tt.TestName, func(t *testing.T) {
-			// fields, err := CreatePostgresRepositoryFieldsTest(configFileName, pathToConfig)
+
 			fields := PostgresRepositoryFields{DB: db}
 
 			doctorRepository := CreateDoctorPostgresRepository(&fields)
 
-			err := doctorRepository.Create(tt.InputData.doctor)
-
-			tt.CheckOutput(t, err)
-
-			doctor, err := doctorRepository.GetDoctorByLogin("ChicagoTest")
-
-			if err == nil {
-				err = doctorRepository.Delete(doctor.DoctorId)
-			}
-
+			err := doctorRepository.SetRole()
 			tt.CheckOutputHelp(t, err)
+
+			err = doctorRepository.Create(tt.InputData.doctor)
+			tt.CheckOutput(t, err)
 		})
 	}
 }
@@ -102,26 +96,21 @@ func TestDoctorPostgresRepositoryGetId(t *testing.T) {
 	for _, tt := range testDoctorPostgresRepositoryGetId {
 		tt := tt
 		t.Run(tt.TestName, func(t *testing.T) {
-			// fields, err := CreatePostgresRepositoryFieldsTest(configFileName, pathToConfig)
 			fields := PostgresRepositoryFields{DB: db}
 
 			doctorRepository := CreateDoctorPostgresRepository(&fields)
 
-			err := doctorRepository.Create(tt.InputData.doctor)
+			err := doctorRepository.SetRole()
+			tt.CheckOutputHelp(t, err)
 
+			err = doctorRepository.Create(tt.InputData.doctor)
 			tt.CheckOutputHelp(t, err)
 
 			doctor, err := doctorRepository.GetDoctorByLogin("ChicagoTest")
-
 			tt.CheckOutputHelp(t, err)
 
 			doctor, err = doctorRepository.GetDoctorById(doctor.DoctorId)
-
 			tt.CheckOutput(t, doctor, err)
-
-			err = doctorRepository.Delete(doctor.DoctorId)
-
-			tt.CheckOutputHelp(t, err)
 		})
 	}
 }

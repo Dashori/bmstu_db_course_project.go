@@ -32,13 +32,18 @@ var testClientPostgresRepositoryCreateFailure = []struct {
 	InputData struct {
 		client *models.Client
 	}
-	CheckOutput func(t *testing.T, err error)
+	CheckOutput     func(t *testing.T, err error)
+	CheckOutputHelp func(t *testing.T, err error)
 }{
 	{
 		TestName: "create failure test",
 		InputData: struct {
 			client *models.Client
 		}{&models.Client{Login: "ChicagoTest", Password: "12345"}},
+
+		CheckOutputHelp: func(t *testing.T, err error) {
+			require.NoError(t, err)
+		},
 
 		CheckOutput: func(t *testing.T, err error) {
 			require.Error(t, err)
@@ -59,19 +64,13 @@ func TestClientPostgresRepositoryCreate(t *testing.T) {
 		tt := tt
 		t.Run(tt.TestName, func(t *testing.T) {
 			fields := PostgresRepositoryFields{DB: db}
-			// fields, err := CreatePostgresRepositoryFieldsTest(configFileName, pathToConfig)
 
 			clientRepository := CreateClientPostgresRepository(&fields)
 
-			err := clientRepository.Create(tt.InputData.client)
-
+			err := clientRepository.SetRole()
 			tt.CheckOutput(t, err)
 
-			client, err := clientRepository.GetClientByLogin("ChicagoTest")
-
-			if err == nil {
-				err = clientRepository.Delete(client.ClientId)
-			}
+			err = clientRepository.Create(tt.InputData.client)
 
 			tt.CheckOutput(t, err)
 		})
@@ -80,24 +79,18 @@ func TestClientPostgresRepositoryCreate(t *testing.T) {
 	for _, tt := range testClientPostgresRepositoryCreateFailure {
 		tt := tt
 		t.Run(tt.TestName, func(t *testing.T) {
-			// fields, err := CreatePostgresRepositoryFieldsTest(configFileName, pathToConfig)
+
 			fields := PostgresRepositoryFields{DB: db}
 
 			clientRepository := CreateClientPostgresRepository(&fields)
 
-			clientRepository.Create(tt.InputData.client)
+			err := clientRepository.SetRole()
+			tt.CheckOutputHelp(t, err)
 
 			clientRepository.Create(tt.InputData.client)
 
-			err := clientRepository.Create(tt.InputData.client)
-
+			err = clientRepository.Create(tt.InputData.client)
 			tt.CheckOutput(t, err)
-
-			client, err := clientRepository.GetClientByLogin("ChicagoTest")
-
-			if err == nil {
-				err = clientRepository.Delete(client.ClientId)
-			}
 		})
 	}
 }

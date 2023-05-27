@@ -42,7 +42,6 @@ func (d *DoctorPostgresRepository) SetRole() error {
 	return nil
 }
 
-
 func (d *DoctorPostgresRepository) Create(doctor *models.Doctor) error {
 	query := `insert into doctors(login, password, start_time, end_time) values($1, $2, $3, $4);`
 

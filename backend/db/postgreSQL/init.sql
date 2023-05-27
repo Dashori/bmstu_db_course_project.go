@@ -5,7 +5,7 @@ create table doctors
 	login text,
 	password text,
 	start_time int,
-	end_time int,
+	end_time int
 );
 alter table doctors add constraint unique_login_doctor unique (login);
 
@@ -58,3 +58,24 @@ create table doctors_specializations
 	id_doctor int references doctors(id_doctor),
 	primary key (id_spec, id_doctor)
 );
+
+
+create role doctor;
+grant select, insert, update(login, password, start_time, end_time) on doctors to doctor;
+grant usage, select on sequence doctors_id_doctor_seq to doctor;
+grant select, insert on specializations to doctor;
+grant select, insert on doctors_specializations to doctor;
+grant select (id_client, login) on clients to doctor;
+grant select, update on pets to doctor;
+grant select, insert on records to doctor;
+
+create role client;
+grant select, insert, update(login, password) on clients to client;
+grant usage, select on sequence clients_id_client_seq to client;
+grant select  on specializations to client;
+grant select on doctors_specializations to client;
+grant select on doctors to client;
+grant select, insert, delete, update on pets to client;
+grant usage, select on sequence pets_id_pet_seq to client;
+grant select, insert on records to client;
+grant usage, select on sequence records_id_record_seq to client;

@@ -43,7 +43,6 @@ func TestRecordPostgresRepositoryGetDoctor(t *testing.T) {
 		tt := tt
 		t.Run(tt.TestName, func(t *testing.T) {
 			fields := PostgresRepositoryFields{DB: db}
-			// fields, err := CreatePostgresRepositoryFieldsTest(configFileName, pathToConfig)
 
 			recordRepository := CreateRecordPostgresRepository(&fields)
 			clientRepository := CreateClientPostgresRepository(&fields)
@@ -78,12 +77,6 @@ func TestRecordPostgresRepositoryGetDoctor(t *testing.T) {
 			tt.CheckOutput(t, err)
 
 			err = petRepository.Delete(pets[0].PetId) // при удалении pet удалится и запись в records
-			tt.CheckOutputHelp(t, err)
-
-			err = doctorRepository.Delete(doctor.DoctorId)
-			tt.CheckOutputHelp(t, err)
-
-			err = clientRepository.Delete(client.ClientId)
 			tt.CheckOutputHelp(t, err)
 		})
 	}

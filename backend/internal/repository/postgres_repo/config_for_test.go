@@ -58,6 +58,7 @@ func SetupTestDatabase() (testcontainers.Container, *sql.DB) {
 	}
 
 	if _, err := db.Exec(string(text)); err != nil {
+		fmt.Println(err)
 		return dbContainer, nil
 	}
 
