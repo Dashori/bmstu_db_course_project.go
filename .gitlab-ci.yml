@@ -38,7 +38,7 @@ linter-job:
     - cd backend
     - ls
     - go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.45.0
-    - golangci-lint run ./... >> linter.txt
+    - golangci-lint run >> linter.txt
   artifacts:
     paths:
       - backend/linter.txt
