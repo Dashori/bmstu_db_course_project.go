@@ -42,9 +42,9 @@ func (p *PetPostgresRepository) Create(pet *models.Pet) error {
 
 func (p *PetPostgresRepository) GetPet(id uint64) (*models.Pet, error) {
 	query := `select * from pets where pets.id_pet = $1;`
-	petBD := &PetPostgres{}
+	petDB := &PetPostgres{}
 
-	err := p.db.Get(petBD, query, id)
+	err := p.db.Get(petDB, query, id)
 
 	if err == sql.ErrNoRows {
 		return nil, repoErrors.EntityDoesNotExists
@@ -53,7 +53,7 @@ func (p *PetPostgresRepository) GetPet(id uint64) (*models.Pet, error) {
 	}
 
 	petModels := &models.Pet{}
-	err = copier.Copy(petModels, petBD)
+	err = copier.Copy(petModels, petDB)
 
 	if err != nil {
 		return nil, dbErrors.ErrorCopy

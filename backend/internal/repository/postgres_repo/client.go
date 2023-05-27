@@ -38,9 +38,9 @@ func (c *ClientPostgresRepository) Create(client *models.Client) error {
 
 func (c *ClientPostgresRepository) GetClientByLogin(login string) (*models.Client, error) {
 	query := `select * from clients where login = $1;`
-	clientBD := &ClientPostgres{}
+	clientDB := &ClientPostgres{}
 
-	err := c.db.Get(clientBD, query, login)
+	err := c.db.Get(clientDB, query, login)
 
 	if err == sql.ErrNoRows {
 		return nil, repoErrors.EntityDoesNotExists
@@ -49,7 +49,7 @@ func (c *ClientPostgresRepository) GetClientByLogin(login string) (*models.Clien
 	}
 
 	clientModels := &models.Client{}
-	err = copier.Copy(clientModels, clientBD)
+	err = copier.Copy(clientModels, clientDB)
 
 	if err != nil {
 		return nil, dbErrors.ErrorCopy
@@ -60,9 +60,9 @@ func (c *ClientPostgresRepository) GetClientByLogin(login string) (*models.Clien
 
 func (c *ClientPostgresRepository) GetClientById(id uint64) (*models.Client, error) {
 	query := `select * from clients where id_client = $1;`
-	clientBD := &ClientPostgres{}
+	clientDB := &ClientPostgres{}
 
-	err := c.db.Get(clientBD, query, id)
+	err := c.db.Get(clientDB, query, id)
 
 	if err == sql.ErrNoRows {
 		return nil, repoErrors.EntityDoesNotExists
@@ -71,7 +71,7 @@ func (c *ClientPostgresRepository) GetClientById(id uint64) (*models.Client, err
 	}
 
 	clientModels := &models.Client{}
-	err = copier.Copy(clientModels, clientBD)
+	err = copier.Copy(clientModels, clientDB)
 
 	if err != nil {
 		return nil, dbErrors.ErrorCopy
@@ -82,9 +82,9 @@ func (c *ClientPostgresRepository) GetClientById(id uint64) (*models.Client, err
 
 func (c *ClientPostgresRepository) GetAllClient() ([]models.Client, error) {
 	query := `select * from clients;`
-	clientBD := []ClientPostgres{}
+	clientDB := []ClientPostgres{}
 
-	err := c.db.Select(&clientBD, query)
+	err := c.db.Select(&clientDB, query)
 
 	if err == sql.ErrNoRows {
 		return nil, repoErrors.EntityDoesNotExists
@@ -94,9 +94,9 @@ func (c *ClientPostgresRepository) GetAllClient() ([]models.Client, error) {
 
 	clientModels := []models.Client{}
 
-	for i := range clientBD {
+	for i := range clientDB {
 		client := models.Client{}
-		err = copier.Copy(client, &clientBD[i])
+		err = copier.Copy(client, &clientDB[i])
 
 		if err != nil {
 			return nil, dbErrors.ErrorCopy

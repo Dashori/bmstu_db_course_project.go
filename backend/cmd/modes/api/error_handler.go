@@ -3,7 +3,7 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 
-	bdErrors "backend/internal/pkg/errors/bdErrors"
+	dbErrors "backend/internal/pkg/errors/dbErrors"
 	servicesErrors "backend/internal/pkg/errors/servicesErrors"
 )
 
@@ -13,13 +13,13 @@ func errorHandler(c *gin.Context, err error) bool {
 		return true
 	}
 
-	if err == bdErrors.ErrorParseConfig ||
-		err == bdErrors.ErrorInitDB ||
-		err == bdErrors.ErrorInsert ||
-		err == bdErrors.ErrorDelete ||
-		err == bdErrors.ErrorSelect ||
-		err == bdErrors.ErrorUpdate ||
-		err == bdErrors.ErrorCopy {
+	if err == dbErrors.ErrorParseConfig ||
+		err == dbErrors.ErrorInitDB ||
+		err == dbErrors.ErrorInsert ||
+		err == dbErrors.ErrorDelete ||
+		err == dbErrors.ErrorSelect ||
+		err == dbErrors.ErrorUpdate ||
+		err == dbErrors.ErrorCopy {
 
 		jsonInternalServerErrorResponse(c, err)
 		return false

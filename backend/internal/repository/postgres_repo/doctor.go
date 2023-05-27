@@ -6,6 +6,7 @@ import (
 	"backend/internal/pkg/errors/repoErrors"
 	"backend/internal/repository"
 	"database/sql"
+	"fmt"
 	"github.com/jinzhu/copier"
 	"github.com/jmoiron/sqlx"
 )
@@ -19,7 +20,7 @@ type DoctorPostgres struct {
 }
 
 type DoctorsSpec struct {
-	Specs []string
+	Spec string `db:"spec_name"`
 }
 
 type DoctorPostgresRepository struct {
@@ -43,19 +44,29 @@ func (d *DoctorPostgresRepository) Create(doctor *models.Doctor) error {
 }
 
 func (d *DoctorPostgresRepository) GetDoctorSpecs(id uint64) ([]string, error) {
-	query := `select * from doctors_specializations where id_doctor = $1;`
-	doctorDB := &DoctorsSpec{}
+	query := `select s.spec_name from doctors_specializations ds
+	join doctors d on d.id_doctor = ds.id_doctor
+	join specializations s on s.id_spec = ds.id_spec
+	where d.id_doctor = $1;`
 
-	err := d.db.Get(doctorDB, query, id)
+	doctorDB := []DoctorsSpec{}
+
+	err := d.db.Select(&doctorDB, query, id)
 	if err == sql.ErrNoRows {
 		return nil, repoErrors.EntityDoesNotExists
 	} else if err != nil {
-		return nil, DBErrors.ErrorSelect
+		return nil, dbErrors.ErrorSelect
 	}
 
-	return doctorDB.
-}
+	doctorSpecs := []string{}
 
+	for i := range doctorDB {
+		spec := string(doctorDB[i].Spec)
+		doctorSpecs = append(doctorSpecs, spec)
+	}
+
+	return doctorSpecs, nil
+}
 
 func (d *DoctorPostgresRepository) GetDoctorByLogin(login string) (*models.Doctor, error) {
 	query := `select * from doctors where login = $1;`
@@ -75,6 +86,14 @@ func (d *DoctorPostgresRepository) GetDoctorByLogin(login string) (*models.Docto
 	if err != nil {
 		return nil, dbErrors.ErrorCopy
 	}
+
+	doctorModels.Spec, err = d.GetDoctorSpecs(doctorModels.DoctorId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Println(doctorModels.Spec)
 
 	return doctorModels, nil
 }
