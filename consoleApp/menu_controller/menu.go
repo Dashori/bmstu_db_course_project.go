@@ -18,11 +18,13 @@ func RunMenu(client *http.Client) error {
 
 	switch who {
 	case 0:
+		setRole(client, "client")
 		err := clientMenu(client)
 		if err != nil {
 			return err
 		}
 	case 1:
+		setRole(client, "doctor")
 		err := doctorMenu(client)
 		if err != nil {
 			return err

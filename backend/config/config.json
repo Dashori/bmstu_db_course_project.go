@@ -7,7 +7,7 @@
       "dbname": "postgres"
     },
 
-    "mode" : "tech",
+    "mode" : "api",
     "loglevel": "info",
     "logfile" : "info.log",
     "port": ":8080",

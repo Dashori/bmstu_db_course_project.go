@@ -10,6 +10,19 @@ import (
 	"net/http"
 )
 
+func setRole(client *http.Client, role string) error {
+
+	response, err := handlers.SetRole(client, role)
+
+	if err == errors.ErrorResponseStatus {
+		return utils.CheckErrorInBody(response)
+	} else if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func clientMenu(client *http.Client) error {
 
 	view.PrintClientMenu()

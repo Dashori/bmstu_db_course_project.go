@@ -8,6 +8,22 @@ import (
 	"net/http"
 )
 
+func SetRole(client *http.Client, role string)(*http.Response, error) {
+	url := "http://" + adress + ":" + port + "/api/setRole"
+	params := fmt.Sprintf("{\"Role\": \"%s\"}", role)
+	var jsonStr = []byte(params)
+
+	request, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+	if err != nil {
+		return nil, errors.ErrorHTTP
+	}
+	request.Header.Set("Content-Type", "application/json")
+
+	response, err := DoRequest(client, request)
+
+	return response, err
+}
+
 func LoginClient(client *http.Client, newClient *models.Client) (*http.Response, error) {
 
 	url := "http://" + adress + ":" + port + "/api/client/login"
