@@ -6,4 +6,5 @@ type Doctor struct {
 	Password  string
 	StartTime uint64
 	EndTime   uint64
+	Spec	  []string
 }

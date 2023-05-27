@@ -2,7 +2,7 @@ package servicesImplementation
 
 import (
 	"backend/internal/models"
-	"backend/internal/pkg/errors/bdErrors"
+	"backend/internal/pkg/errors/dbErrors"
 	"backend/internal/pkg/errors/repoErrors"
 	"backend/internal/pkg/errors/servicesErrors"
 	mock_hasher "backend/internal/pkg/hasher/mocks"
@@ -139,11 +139,11 @@ var testClientCreateFailure = []struct {
 
 			fields.hasherMock.EXPECT().GetHash("12345").Return([]byte("12345_hash"), nil)
 			fields.clientRepositoryMock.EXPECT().Create(&models.Client{Login: "Chepigo", Password: "12345_hash"}).
-				Return(bdErrors.ErrorInsert)
+				Return(dbErrors.ErrorInsert)
 
 		},
 		CheckOutput: func(t *testing.T, err error) {
-			require.ErrorIs(t, err, bdErrors.ErrorInsert)
+			require.ErrorIs(t, err, dbErrors.ErrorInsert)
 		},
 	},
 }
@@ -273,10 +273,10 @@ var testClientLoginFailure = []struct {
 		}{login: "Chepigo", password: "12345"},
 
 		Prepare: func(fields *clientServiceFields) {
-			fields.clientRepositoryMock.EXPECT().GetClientByLogin("Chepigo").Return(nil, bdErrors.ErrorSelect)
+			fields.clientRepositoryMock.EXPECT().GetClientByLogin("Chepigo").Return(nil, dbErrors.ErrorSelect)
 		},
 		CheckOutput: func(t *testing.T, err error) {
-			require.ErrorIs(t, err, bdErrors.ErrorSelect)
+			require.ErrorIs(t, err, dbErrors.ErrorSelect)
 		},
 	},
 }
@@ -368,10 +368,10 @@ var testGetClientByIdFailure = []struct {
 
 		Prepare: func(fields *clientServiceFields) {
 			fields.clientRepositoryMock.EXPECT().GetClientById(uint64(1)).Return(nil,
-				bdErrors.ErrorSelect)
+				dbErrors.ErrorSelect)
 		},
 		CheckOutput: func(t *testing.T, err error) {
-			require.ErrorIs(t, err, bdErrors.ErrorSelect)
+			require.ErrorIs(t, err, dbErrors.ErrorSelect)
 		},
 	},
 }

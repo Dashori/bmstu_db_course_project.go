@@ -5,7 +5,7 @@ create table doctors
 	login text,
 	password text,
 	start_time int,
-	end_time int
+	end_time int,
 );
 alter table doctors add constraint unique_login_doctor unique (login);
 
@@ -17,7 +17,7 @@ create table clients
 	login text,
 	password text
 );
-alter table clients  add constraint unique_login_client unique (login);
+alter table clients add constraint unique_login_client unique (login);
 
 
 drop table if exists pets cascade;
@@ -41,4 +41,20 @@ create table records
 	id_client int references clients (id_client),
 	time_start timestamp,
 	time_end timestamp
+);
+
+drop table if exists specializations cascade;
+create table specializations 
+(
+	id_spec serial primary key,
+	spec_name text
+);
+
+
+drop table if exists doctors_specializations cascade;
+create table doctors_specializations
+(
+	id_spec int references specializations(id_spec), 
+	id_doctor int references doctors(id_doctor),
+	primary key (id_spec, id_doctor)
 );

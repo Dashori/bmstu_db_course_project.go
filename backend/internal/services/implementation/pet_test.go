@@ -2,7 +2,7 @@ package servicesImplementation
 
 import (
 	"backend/internal/models"
-	"backend/internal/pkg/errors/bdErrors"
+	"backend/internal/pkg/errors/dbErrors"
 	"backend/internal/pkg/errors/repoErrors"
 	"backend/internal/pkg/errors/servicesErrors"
 	mock_repository "backend/internal/repository/mocks"
@@ -409,10 +409,10 @@ var testGetAllByClientFailure = []struct {
 		}{id: 1},
 
 		Prepare: func(fields *petServiceFields) {
-			fields.petRepositoryMock.EXPECT().GetAllByClient(uint64(1)).Return(nil, bdErrors.ErrorSelect)
+			fields.petRepositoryMock.EXPECT().GetAllByClient(uint64(1)).Return(nil, dbErrors.ErrorSelect)
 		},
 		CheckOutput: func(t *testing.T, err error) {
-			require.ErrorIs(t, err, bdErrors.ErrorSelect)
+			require.ErrorIs(t, err, dbErrors.ErrorSelect)
 		},
 	},
 }

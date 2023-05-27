@@ -2,7 +2,7 @@ package servicesImplementation
 
 import (
 	"backend/internal/models"
-	"backend/internal/pkg/errors/bdErrors"
+	"backend/internal/pkg/errors/dbErrors"
 	"backend/internal/pkg/errors/repoErrors"
 	"backend/internal/pkg/errors/servicesErrors"
 	mock_hasher "backend/internal/pkg/hasher/mocks"
@@ -162,10 +162,10 @@ var testDoctorCreateFailure = []struct {
 			fields.hasherMock.EXPECT().GetHash("12345").Return([]byte("12345_hash"), nil)
 			fields.doctorRepositoryMock.EXPECT().Create(
 				&models.Doctor{Login: "Chepigo", Password: "12345_hash", StartTime: 10, EndTime: 12}).
-				Return(bdErrors.ErrorInsert)
+				Return(dbErrors.ErrorInsert)
 		},
 		CheckOutput: func(t *testing.T, err error) {
-			require.ErrorIs(t, err, bdErrors.ErrorInsert)
+			require.ErrorIs(t, err, dbErrors.ErrorInsert)
 		},
 	},
 }
@@ -299,10 +299,10 @@ var testDoctorLoginFailure = []struct {
 
 		Prepare: func(fields *doctorServiceFields) {
 			fields.doctorRepositoryMock.EXPECT().GetDoctorByLogin("Chepigo").
-				Return(nil, bdErrors.ErrorSelect)
+				Return(nil, dbErrors.ErrorSelect)
 		},
 		CheckOutput: func(t *testing.T, err error) {
-			require.ErrorIs(t, err, bdErrors.ErrorSelect)
+			require.ErrorIs(t, err, dbErrors.ErrorSelect)
 		},
 	},
 }
@@ -437,10 +437,10 @@ var testDoctorUpdateSheduleFailure = []struct {
 
 		Prepare: func(fields *doctorServiceFields) {
 			fields.doctorRepositoryMock.EXPECT().GetDoctorById(uint64(1)).Return(nil,
-				bdErrors.ErrorSelect)
+				dbErrors.ErrorSelect)
 		},
 		CheckOutput: func(t *testing.T, err error) {
-			require.ErrorIs(t, err, bdErrors.ErrorSelect)
+			require.ErrorIs(t, err, dbErrors.ErrorSelect)
 		},
 	},
 }
@@ -527,10 +527,10 @@ var testDoctorGetAllDoctorsFailure = []struct {
 		}{},
 
 		Prepare: func(fields *doctorServiceFields) {
-			fields.doctorRepositoryMock.EXPECT().GetAllDoctors().Return(nil, bdErrors.ErrorSelect)
+			fields.doctorRepositoryMock.EXPECT().GetAllDoctors().Return(nil, dbErrors.ErrorSelect)
 		},
 		CheckOutput: func(t *testing.T, err error) {
-			require.ErrorIs(t, err, bdErrors.ErrorSelect)
+			require.ErrorIs(t, err, dbErrors.ErrorSelect)
 		},
 	},
 }
@@ -635,10 +635,10 @@ var testDoctorGetDoctorByIdFailure = []struct {
 		}{id: 1},
 
 		Prepare: func(fields *doctorServiceFields) {
-			fields.doctorRepositoryMock.EXPECT().GetDoctorById(uint64(1)).Return(nil, bdErrors.ErrorSelect)
+			fields.doctorRepositoryMock.EXPECT().GetDoctorById(uint64(1)).Return(nil, dbErrors.ErrorSelect)
 		},
 		CheckOutput: func(t *testing.T, err error) {
-			require.ErrorIs(t, err, bdErrors.ErrorSelect)
+			require.ErrorIs(t, err, dbErrors.ErrorSelect)
 		},
 	},
 }

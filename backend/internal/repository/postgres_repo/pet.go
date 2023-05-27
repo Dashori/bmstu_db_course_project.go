@@ -2,7 +2,7 @@ package postgres_repo
 
 import (
 	"backend/internal/models"
-	"backend/internal/pkg/errors/bdErrors"
+	"backend/internal/pkg/errors/dbErrors"
 	"backend/internal/pkg/errors/repoErrors"
 	"backend/internal/repository"
 	"database/sql"
@@ -34,7 +34,7 @@ func (p *PetPostgresRepository) Create(pet *models.Pet) error {
 	_, err := p.db.Exec(query, pet.Name, pet.Type, pet.Age, pet.Health, pet.ClientId)
 
 	if err != nil {
-		return bdErrors.ErrorInsert
+		return dbErrors.ErrorInsert
 	}
 
 	return nil
@@ -49,14 +49,14 @@ func (p *PetPostgresRepository) GetPet(id uint64) (*models.Pet, error) {
 	if err == sql.ErrNoRows {
 		return nil, repoErrors.EntityDoesNotExists
 	} else if err != nil {
-		return nil, bdErrors.ErrorSelect
+		return nil, dbErrors.ErrorSelect
 	}
 
 	petModels := &models.Pet{}
 	err = copier.Copy(petModels, petBD)
 
 	if err != nil {
-		return nil, bdErrors.ErrorCopy
+		return nil, dbErrors.ErrorCopy
 	}
 
 	return petModels, nil
@@ -71,7 +71,7 @@ func (p *PetPostgresRepository) GetAllByClient(id uint64) ([]models.Pet, error) 
 	if err == sql.ErrNoRows {
 		return nil, repoErrors.EntityDoesNotExists
 	} else if err != nil {
-		return nil, bdErrors.ErrorSelect
+		return nil, dbErrors.ErrorSelect
 	}
 
 	petModels := []models.Pet{}
@@ -81,7 +81,7 @@ func (p *PetPostgresRepository) GetAllByClient(id uint64) ([]models.Pet, error) 
 		err = copier.Copy(pet, r)
 
 		if err != nil {
-			return nil, bdErrors.ErrorCopy
+			return nil, dbErrors.ErrorCopy
 		}
 
 		petModels = append(petModels, *pet)
@@ -100,7 +100,7 @@ func (p *PetPostgresRepository) GetAllPets() ([]models.Pet, error) {
 	if err == sql.ErrNoRows {
 		return nil, repoErrors.EntityDoesNotExists
 	} else if err != nil {
-		return nil, bdErrors.ErrorSelect
+		return nil, dbErrors.ErrorSelect
 	}
 
 	petModels := []models.Pet{}
@@ -110,7 +110,7 @@ func (p *PetPostgresRepository) GetAllPets() ([]models.Pet, error) {
 		err = copier.Copy(pet, &petPostgres[i])
 
 		if err != nil {
-			return nil, bdErrors.ErrorCopy
+			return nil, dbErrors.ErrorCopy
 		}
 
 		petModels = append(petModels, *pet)
@@ -125,7 +125,7 @@ func (p *PetPostgresRepository) Delete(id uint64) error {
 	_, err := p.db.Exec(query, id)
 
 	if err != nil {
-		return bdErrors.ErrorDelete
+		return dbErrors.ErrorDelete
 	}
 
 	return nil

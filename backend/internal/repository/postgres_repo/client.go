@@ -2,7 +2,7 @@ package postgres_repo
 
 import (
 	"backend/internal/models"
-	"backend/internal/pkg/errors/bdErrors"
+	"backend/internal/pkg/errors/dbErrors"
 	"backend/internal/pkg/errors/repoErrors"
 	"backend/internal/repository"
 	"database/sql"
@@ -30,7 +30,7 @@ func (c *ClientPostgresRepository) Create(client *models.Client) error {
 	_, err := c.db.Exec(query, client.Login, client.Password)
 
 	if err != nil {
-		return bdErrors.ErrorInsert
+		return dbErrors.ErrorInsert
 	}
 
 	return nil
@@ -45,14 +45,14 @@ func (c *ClientPostgresRepository) GetClientByLogin(login string) (*models.Clien
 	if err == sql.ErrNoRows {
 		return nil, repoErrors.EntityDoesNotExists
 	} else if err != nil {
-		return nil, bdErrors.ErrorSelect
+		return nil, dbErrors.ErrorSelect
 	}
 
 	clientModels := &models.Client{}
 	err = copier.Copy(clientModels, clientBD)
 
 	if err != nil {
-		return nil, bdErrors.ErrorCopy
+		return nil, dbErrors.ErrorCopy
 	}
 
 	return clientModels, nil
@@ -67,14 +67,14 @@ func (c *ClientPostgresRepository) GetClientById(id uint64) (*models.Client, err
 	if err == sql.ErrNoRows {
 		return nil, repoErrors.EntityDoesNotExists
 	} else if err != nil {
-		return nil, bdErrors.ErrorSelect
+		return nil, dbErrors.ErrorSelect
 	}
 
 	clientModels := &models.Client{}
 	err = copier.Copy(clientModels, clientBD)
 
 	if err != nil {
-		return nil, bdErrors.ErrorCopy
+		return nil, dbErrors.ErrorCopy
 	}
 
 	return clientModels, nil
@@ -89,7 +89,7 @@ func (c *ClientPostgresRepository) GetAllClient() ([]models.Client, error) {
 	if err == sql.ErrNoRows {
 		return nil, repoErrors.EntityDoesNotExists
 	} else if err != nil {
-		return nil, bdErrors.ErrorSelect
+		return nil, dbErrors.ErrorSelect
 	}
 
 	clientModels := []models.Client{}
@@ -99,7 +99,7 @@ func (c *ClientPostgresRepository) GetAllClient() ([]models.Client, error) {
 		err = copier.Copy(client, &clientBD[i])
 
 		if err != nil {
-			return nil, bdErrors.ErrorCopy
+			return nil, dbErrors.ErrorCopy
 		}
 
 		clientModels = append(clientModels, client)
@@ -113,7 +113,7 @@ func (c *ClientPostgresRepository) Delete(id uint64) error {
 
 	_, err := c.db.Exec(query, id)
 	if err != nil {
-		return bdErrors.ErrorDelete
+		return dbErrors.ErrorDelete
 	}
 
 	return nil

@@ -3,7 +3,7 @@ package postgres_repo
 import (
 	"backend/cmd/modes/flags"
 	"backend/config"
-	"backend/internal/pkg/errors/bdErrors"
+	"backend/internal/pkg/errors/dbErrors"
 	"backend/internal/repository"
 	"database/sql"
 	"github.com/charmbracelet/log"
@@ -25,7 +25,7 @@ func CreatePostgresRepositoryFields(Postgres flags.PostgresFlags, logger *log.Lo
 	fields.DB, err = fields.Config.Postgres.InitDB(logger)
 	if err != nil {
 		logger.Error("POSTGRES! Error parse config for postgreSQL")
-		return nil, bdErrors.ErrorParseConfig
+		return nil, dbErrors.ErrorParseConfig
 	}
 
 	logger.Info("POSTGRES! Successfully create postgres repository fields")
@@ -38,12 +38,12 @@ func CreatePostgresRepositoryFieldsTest(configFileName string, pathToConfig stri
 
 	err := fields.Config.ParseConfig(configFileName, pathToConfig)
 	if err != nil {
-		return nil, bdErrors.ErrorParseConfig
+		return nil, dbErrors.ErrorParseConfig
 	}
 
 	fields.DB, err = fields.Config.Postgres.InitDB(log.New(os.Stderr))
 	if err != nil {
-		return nil, bdErrors.ErrorParseConfig
+		return nil, dbErrors.ErrorParseConfig
 	}
 
 	return fields, nil

@@ -2,7 +2,7 @@ package postgres_repo
 
 import (
 	"backend/internal/models"
-	"backend/internal/pkg/errors/bdErrors"
+	"backend/internal/pkg/errors/dbErrors"
 	"backend/internal/pkg/errors/repoErrors"
 	"backend/internal/repository"
 	"database/sql"
@@ -38,7 +38,7 @@ func (r *RecordPostgresRepository) Create(record *models.Record) error {
 	_, err := r.db.Exec(query, record.PetId, record.ClientId, record.DoctorId, record.DatetimeStart, record.DatetimeEnd)
 
 	if err != nil {
-		return bdErrors.ErrorInsert
+		return dbErrors.ErrorInsert
 	}
 
 	return nil
@@ -82,7 +82,7 @@ func (r *RecordPostgresRepository) GetRecord(id uint64) (*models.Record, error) 
 	if err == sql.ErrNoRows {
 		return nil, repoErrors.EntityDoesNotExists
 	} else if err != nil {
-		return nil, bdErrors.ErrorSelect
+		return nil, dbErrors.ErrorSelect
 	}
 
 	record := copyRecord(*recordDB)
@@ -106,7 +106,7 @@ func (r *RecordPostgresRepository) GetAllByClient(id uint64) ([]models.Record, e
 	if err == sql.ErrNoRows {
 		return nil, repoErrors.EntityDoesNotExists
 	} else if err != nil {
-		return nil, bdErrors.ErrorSelect
+		return nil, dbErrors.ErrorSelect
 	}
 
 	recordModels := []models.Record{}
@@ -137,7 +137,7 @@ func (r *RecordPostgresRepository) GetAllByDoctor(id uint64) ([]models.Record, e
 	if err == sql.ErrNoRows {
 		return nil, repoErrors.EntityDoesNotExists
 	} else if err != nil {
-		return nil, bdErrors.ErrorSelect
+		return nil, dbErrors.ErrorSelect
 	}
 
 	recordModels := []models.Record{}
@@ -168,7 +168,7 @@ func (r *RecordPostgresRepository) GetAllRecordFilter(doctorId uint64, clientId 
 	if err == sql.ErrNoRows {
 		return nil, repoErrors.EntityDoesNotExists
 	} else if err != nil {
-		return nil, bdErrors.ErrorSelect
+		return nil, dbErrors.ErrorSelect
 	}
 
 	recordModels := []models.Record{}
@@ -192,7 +192,7 @@ func (r *RecordPostgresRepository) GetAllRecords() ([]models.Record, error) {
 	if err == sql.ErrNoRows {
 		return nil, repoErrors.EntityDoesNotExists
 	} else if err != nil {
-		return nil, bdErrors.ErrorSelect
+		return nil, dbErrors.ErrorSelect
 	}
 
 	recordModels := []models.Record{}
@@ -212,7 +212,7 @@ func (r *RecordPostgresRepository) Delete(id uint64) error {
 	_, err := r.db.Exec(query, id)
 
 	if err != nil {
-		return bdErrors.ErrorDelete
+		return dbErrors.ErrorDelete
 	}
 
 	return nil

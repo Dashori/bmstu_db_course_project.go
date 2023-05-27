@@ -2,7 +2,7 @@ package postgres_repo
 
 import (
 	"backend/internal/models"
-	"backend/internal/pkg/errors/bdErrors"
+	"backend/internal/pkg/errors/dbErrors"
 	"backend/internal/pkg/errors/repoErrors"
 	"backend/internal/repository"
 	"database/sql"
@@ -16,6 +16,10 @@ type DoctorPostgres struct {
 	Password  string `db:"password"`
 	StartTime uint64 `db:"start_time"`
 	EndTime   uint64 `db:"end_time"`
+}
+
+type DoctorsSpec struct {
+	Specs []string
 }
 
 type DoctorPostgresRepository struct {
@@ -32,29 +36,44 @@ func (d *DoctorPostgresRepository) Create(doctor *models.Doctor) error {
 	_, err := d.db.Exec(query, doctor.Login, doctor.Password, doctor.StartTime, doctor.EndTime)
 
 	if err != nil {
-		return bdErrors.ErrorInsert
+		return dbErrors.ErrorInsert
 	}
 
 	return nil
 }
 
+func (d *DoctorPostgresRepository) GetDoctorSpecs(id uint64) ([]string, error) {
+	query := `select * from doctors_specializations where id_doctor = $1;`
+	doctorDB := &DoctorsSpec{}
+
+	err := d.db.Get(doctorDB, query, id)
+	if err == sql.ErrNoRows {
+		return nil, repoErrors.EntityDoesNotExists
+	} else if err != nil {
+		return nil, DBErrors.ErrorSelect
+	}
+
+	return doctorDB.
+}
+
+
 func (d *DoctorPostgresRepository) GetDoctorByLogin(login string) (*models.Doctor, error) {
 	query := `select * from doctors where login = $1;`
-	doctorBD := &DoctorPostgres{}
+	doctorDB := &DoctorPostgres{}
 
-	err := d.db.Get(doctorBD, query, login)
+	err := d.db.Get(doctorDB, query, login)
 
 	if err == sql.ErrNoRows {
 		return nil, repoErrors.EntityDoesNotExists
 	} else if err != nil {
-		return nil, bdErrors.ErrorSelect
+		return nil, dbErrors.ErrorSelect
 	}
 
 	doctorModels := &models.Doctor{}
-	err = copier.Copy(doctorModels, doctorBD)
+	err = copier.Copy(doctorModels, doctorDB)
 
 	if err != nil {
-		return nil, bdErrors.ErrorCopy
+		return nil, dbErrors.ErrorCopy
 	}
 
 	return doctorModels, nil
@@ -62,21 +81,21 @@ func (d *DoctorPostgresRepository) GetDoctorByLogin(login string) (*models.Docto
 
 func (d *DoctorPostgresRepository) GetDoctorById(id uint64) (*models.Doctor, error) {
 	query := `select * from doctors where id_doctor = $1;`
-	doctorBD := &DoctorPostgres{}
+	doctorDB := &DoctorPostgres{}
 
-	err := d.db.Get(doctorBD, query, id)
+	err := d.db.Get(doctorDB, query, id)
 
 	if err == sql.ErrNoRows {
 		return nil, repoErrors.EntityDoesNotExists
 	} else if err != nil {
-		return nil, bdErrors.ErrorSelect
+		return nil, dbErrors.ErrorSelect
 	}
 
 	doctorModels := &models.Doctor{}
-	err = copier.Copy(doctorModels, doctorBD)
+	err = copier.Copy(doctorModels, doctorDB)
 
 	if err != nil {
-		return nil, bdErrors.ErrorCopy
+		return nil, dbErrors.ErrorCopy
 	}
 
 	return doctorModels, nil
@@ -91,7 +110,7 @@ func (d *DoctorPostgresRepository) GetAllDoctors() ([]models.Doctor, error) {
 	if err == sql.ErrNoRows {
 		return nil, repoErrors.EntityDoesNotExists
 	} else if err != nil {
-		return nil, bdErrors.ErrorSelect
+		return nil, dbErrors.ErrorSelect
 	}
 
 	doctorModels := []models.Doctor{}
@@ -101,7 +120,7 @@ func (d *DoctorPostgresRepository) GetAllDoctors() ([]models.Doctor, error) {
 		err = copier.Copy(doctor, r)
 
 		if err != nil {
-			return nil, bdErrors.ErrorCopy
+			return nil, dbErrors.ErrorCopy
 		}
 
 		doctorModels = append(doctorModels, *doctor)
@@ -116,7 +135,7 @@ func (d *DoctorPostgresRepository) UpdateShedule(id uint64, newStart uint64, new
 	_, err := d.db.Exec(query, newStart, newEnd, id)
 
 	if err != nil {
-		return bdErrors.ErrorUpdate
+		return dbErrors.ErrorUpdate
 	}
 
 	return nil
@@ -128,7 +147,7 @@ func (d *DoctorPostgresRepository) Delete(id uint64) error {
 	_, err := d.db.Exec(query, id)
 
 	if err != nil {
-		return bdErrors.ErrorDelete
+		return dbErrors.ErrorDelete
 	}
 
 	return nil
