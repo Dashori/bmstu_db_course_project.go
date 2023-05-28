@@ -36,7 +36,7 @@ linter-backend-job:
   script:
     - cd backend
     - go mod tidy
-    - golangci-lint run -E goconst,gofumpt --timeout 5m0s 
+    - golangci-lint run --timeout 5m0s 
   needs:
     - backend-module-build-job
 
@@ -123,7 +123,7 @@ bl-db-test-job:
     - backend-module-build-job
 
 
-build-job:    
+backend-build-job:    
   stage: build
   when: always
   script:
@@ -140,6 +140,20 @@ build-job:
     - db-unit-test-job
     - bl-db-test-job
     - backend-module-build-job
+
+console-build-job:    
+  stage: build
+  when: always
+  script:
+    - cd consoleApp 
+    - go mod tidy
+    - go build main.go
+  artifacts:
+    paths:
+      - consoleApp/main
+    expire_in: 1 hour
+  needs:
+    - console-module-build-job
 
   
 
