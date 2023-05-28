@@ -40,8 +40,6 @@ linter-job:
       - backend/linter_server.txt
       # - consoleApp/linter_console.txt
     expire_in: 1 day
-  needs:
-    - module-build-job
 
 module-build-job:      
   stage: module_build
@@ -49,6 +47,8 @@ module-build-job:
       - cd backend 
       - go mod init backend
       - go mod tidy
+  needs:
+      - linter-job
 
 bl-unit-test-job:  
   stage: test   
