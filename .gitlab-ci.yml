@@ -36,7 +36,7 @@ linter-backend-job:
   script:
     - cd backend
     - go mod tidy
-    - golangci-lint run
+    - golangci-lint run --timeout 3m0s
   needs:
     - backend-module-build-job
 
@@ -61,7 +61,7 @@ linter-console-job:
   script:
     - cd consoleApp
     - go mod tidy
-    - golangci-lint run
+    - golangci-lint run --timeout 3m0s
   needs:
     - console-module-build-job
 
@@ -120,6 +120,7 @@ bl-db-test-job:
       - backend/internal/services/implementation/petDB.out
     expire_in: 1 hour
   needs:
+    - backend-module-build-job
     - bl-unit-test-job
     - db-unit-test-job
 
@@ -137,6 +138,7 @@ backend-build-job:
       - backend/cmd/main
     expire_in: 1 hour
   needs:
+    - backend-module-build-job
     - bl-unit-test-job
     - db-unit-test-job
     - bl-db-test-job
@@ -153,7 +155,9 @@ console-build-job:
       - consoleApp/main
     expire_in: 1 hour
   needs:
+    - console-module-build-job
     - linter-console-job
+   
 
   
 
