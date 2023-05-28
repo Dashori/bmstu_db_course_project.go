@@ -63,7 +63,10 @@ func doctorLoop(client *http.Client, token string) error {
 				fmt.Printf("\nРасписание успешно изменено!\n\n")
 			}
 		case 3:
-			printInfo(client, token)
+			err = printInfo(client, token)
+			if err != nil {
+				fmt.Println(err)
+			}
 		default:
 			return errors.ErrorCase
 		}

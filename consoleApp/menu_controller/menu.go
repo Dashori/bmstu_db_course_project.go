@@ -7,9 +7,6 @@ import (
 	"net/http"
 )
 
-const port = "8080"
-const adress = "localhost"
-
 func RunMenu(client *http.Client) error {
 	view.PrintRunMenu()
 
@@ -18,14 +15,22 @@ func RunMenu(client *http.Client) error {
 
 	switch who {
 	case 0:
-		setRole(client, "client")
-		err := clientMenu(client)
+		err := setRole(client, "client")
+		if err != nil {
+			return err
+		}
+
+		err = clientMenu(client)
 		if err != nil {
 			return err
 		}
 	case 1:
-		setRole(client, "doctor")
-		err := doctorMenu(client)
+		err := setRole(client, "doctor")
+		if err != nil {
+			return err
+		}
+
+		err = doctorMenu(client)
 		if err != nil {
 			return err
 		}

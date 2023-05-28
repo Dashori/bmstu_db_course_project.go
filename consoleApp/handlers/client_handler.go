@@ -8,15 +8,16 @@ import (
 	"net/http"
 )
 
-func SetRole(client *http.Client, role string)(*http.Response, error) {
+func SetRole(client *http.Client, role string) (*http.Response, error) {
 	url := "http://" + adress + ":" + port + "/api/setRole"
 	params := fmt.Sprintf("{\"Role\": \"%s\"}", role)
 	var jsonStr = []byte(params)
 
 	request, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
 	if err != nil {
-		return nil, errors.ErrorHTTP
+		return nil, errors.ErrorNewRequest
 	}
+
 	request.Header.Set("Content-Type", "application/json")
 
 	response, err := DoRequest(client, request)
@@ -32,8 +33,9 @@ func LoginClient(client *http.Client, newClient *models.Client) (*http.Response,
 
 	request, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
 	if err != nil {
-		return nil, errors.ErrorHTTP
+		return nil, errors.ErrorNewRequest
 	}
+
 	request.Header.Set("Content-Type", "application/json")
 
 	response, err := DoRequest(client, request)
@@ -49,8 +51,9 @@ func CreateClient(client *http.Client, newClient *models.Client) (*http.Response
 
 	request, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
 	if err != nil {
-		return nil, errors.ErrorHTTP
+		return nil, errors.ErrorNewRequest
 	}
+
 	request.Header.Set("Content-Type", "application/json")
 
 	response, err := DoRequest(client, request)
@@ -63,7 +66,7 @@ func GetClientPets(client *http.Client, token string) (*http.Response, error) {
 
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return nil, errors.ErrorHTTP
+		return nil, errors.ErrorNewRequest
 	}
 
 	request.Header.Set("Content-Type", "application/json")
@@ -79,7 +82,7 @@ func GetClientInfo(client *http.Client, token string) (*http.Response, error) {
 
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return nil, errors.ErrorHTTP
+		return nil, errors.ErrorNewRequest
 	}
 
 	request.Header.Set("Content-Type", "application/json")
@@ -94,6 +97,10 @@ func GetClientRecords(client *http.Client, token string) (*http.Response, error)
 	url := "http://" + adress + ":" + port + "/api/client/records"
 
 	request, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, errors.ErrorNewRequest
+	}
+
 	request.Header.Set("Content-Type", "application/json")
 	request.Header.Set("Authorization", "Bearer "+token)
 
@@ -110,6 +117,10 @@ func AddPet(client *http.Client, token string, pet models.Pet) (*http.Response, 
 	var jsonStr = []byte(params)
 
 	request, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+	if err != nil {
+		return nil, errors.ErrorNewRequest
+	}
+
 	request.Header.Set("Content-Type", "application/json")
 	request.Header.Set("Authorization", "Bearer "+token)
 
@@ -125,6 +136,10 @@ func DeletePet(client *http.Client, token string, id uint64) (*http.Response, er
 	var jsonStr = []byte(params)
 
 	request, err := http.NewRequest("DELETE", url, bytes.NewBuffer(jsonStr))
+	if err != nil {
+		return nil, errors.ErrorNewRequest
+	}
+
 	request.Header.Set("Content-Type", "application/json")
 	request.Header.Set("Authorization", "Bearer "+token)
 
@@ -141,6 +156,10 @@ func AddRecord(client *http.Client, token string, record models.Record) (*http.R
 	var jsonStr = []byte(params)
 
 	request, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+	if err != nil {
+		return nil, errors.ErrorNewRequest
+	}
+
 	request.Header.Set("Content-Type", "application/json")
 	request.Header.Set("Authorization", "Bearer "+token)
 

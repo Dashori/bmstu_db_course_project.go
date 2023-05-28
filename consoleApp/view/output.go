@@ -15,7 +15,7 @@ func PrintRunMenu() {
 2 -- я гость, мне просто врачей посмотреть
 Выберите роль: `
 
-	fmt.Printf(startPosition)
+	fmt.Printf("%s", startPosition)
 }
 
 func PrintClientMenu() {
@@ -26,7 +26,7 @@ func PrintClientMenu() {
 2 -- зарегестрироваться
 Выберите действие: `
 
-	fmt.Printf(startMenu)
+	fmt.Printf("%s", startMenu)
 }
 
 func PrintClientLoop() {
@@ -41,7 +41,7 @@ func PrintClientLoop() {
 7 -- узнать информацию о себе 
 Выберите действие: `
 
-	fmt.Printf(startMenu)
+	fmt.Printf("%s", startMenu)
 }
 
 func PrintDoctorMenu() {
@@ -51,7 +51,7 @@ func PrintDoctorMenu() {
 1 -- войти
 Выберите действие: `
 
-	fmt.Printf(startMenu)
+	fmt.Printf("%s", startMenu)
 }
 
 func PrintDoctorLoop() {
@@ -63,7 +63,7 @@ func PrintDoctorLoop() {
 3 -- узнать информацию о себе 
 Выберите действие: `
 
-	fmt.Printf(startMenu)
+	fmt.Printf("%s", startMenu)
 }
 
 func PrintRecords(records models.Records) {

@@ -5,12 +5,12 @@ import (
 	models "consoleApp/models"
 	"encoding/json"
 	basicErrors "errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 )
 
 func CheckErrorInBody(response *http.Response) error {
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		return errors.ErrorReadBody
 	}
@@ -37,7 +37,7 @@ func DoAndCheckRequest(client *http.Client, request *http.Request) (*http.Respon
 }
 
 func ParseClientBody(response *http.Response) (models.Client, error) {
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		return models.Client{}, errors.ErrorReadBody
 	}
@@ -51,7 +51,7 @@ func ParseClientBody(response *http.Response) (models.Client, error) {
 }
 
 func ParsePetsBody(response *http.Response) (models.Pets, error) {
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		return models.Pets{}, errors.ErrorReadBody
 	}
@@ -65,7 +65,7 @@ func ParsePetsBody(response *http.Response) (models.Pets, error) {
 }
 
 func ParseDoctorBody(response *http.Response) (models.Doctor, error) {
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		return models.Doctor{}, errors.ErrorParseBody
 	}
@@ -79,7 +79,7 @@ func ParseDoctorBody(response *http.Response) (models.Doctor, error) {
 }
 
 func ParseDoctorsBody(response *http.Response) (models.Doctors, error) {
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		return models.Doctors{}, errors.ErrorParseBody
 	}
@@ -93,7 +93,7 @@ func ParseDoctorsBody(response *http.Response) (models.Doctors, error) {
 }
 
 func ParseRecordsBody(response *http.Response) (models.Records, error) {
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		return models.Records{}, errors.ErrorParseBody
 	}

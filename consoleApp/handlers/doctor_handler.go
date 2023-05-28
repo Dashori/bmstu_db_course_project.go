@@ -47,7 +47,7 @@ func LoginDoctor(client *http.Client, doctor *models.Doctor) (*http.Response, er
 
 	request, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
 	if err != nil {
-		return nil, errors.ErrorHTTP
+		return nil, errors.ErrorNewRequest
 	}
 
 	request.Header.Set("Content-Type", "application/json")
@@ -62,6 +62,10 @@ func GetInfo(client *http.Client, token string) (*http.Response, error) {
 	url := "http://" + adress + ":" + port + "/api/doctor/info"
 
 	request, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, errors.ErrorNewRequest
+	}
+
 	request.Header.Set("Content-Type", "application/json")
 	request.Header.Set("Authorization", "Bearer "+token)
 
@@ -77,6 +81,10 @@ func UpdateShedule(client *http.Client, token string, shedule models.NewShedule)
 
 	var jsonStr = []byte(params)
 	request, err := http.NewRequest("PATCH", url, bytes.NewBuffer(jsonStr))
+	if err != nil {
+		return nil, errors.ErrorNewRequest
+	}
+
 	request.Header.Set("Content-Type", "application/json")
 	request.Header.Set("Authorization", "Bearer "+token)
 
@@ -90,6 +98,10 @@ func GetRecordsDoctor(client *http.Client, token string) (*http.Response, error)
 	url := "http://" + adress + ":" + port + "/api/doctor/records"
 
 	request, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, errors.ErrorNewRequest
+	}
+
 	request.Header.Set("Content-Type", "application/json")
 	request.Header.Set("Authorization", "Bearer "+token)
 
