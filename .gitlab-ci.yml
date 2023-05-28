@@ -11,8 +11,8 @@ services:
 stages: 
   - pre
   - image
-  - module_build
   - linter
+  - module_build
   - test
   - build
   - extra
@@ -24,28 +24,31 @@ stages:
 #   needs:
 #     - linter-job
 
+linter-job:
+  stage: linter
+  image: golangci/golangci-lint:v1.52.2
+  script:
+    - cd backend
+    - go mod init backend
+    - go mod tidy
+    - golangci-lint run >> linter_server.txt
+    - make lint
+    # - cd ../consoleApp
+    # - golangci-lint run >> linter_console.txt
+  artifacts:
+    paths:
+      - backend/linter_server.txt
+      # - consoleApp/linter_console.txt
+    expire_in: 1 day
+  needs:
+    - module-build-job
+
 module-build-job:      
   stage: module_build
   script:
       - cd backend 
       - go mod init backend
       - go mod tidy
-
-linter-job:
-  stage: linter
-  script:
-    - cd backend
-    - go mod init backend
-    - go mod tidy
-    - go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.45.0
-    - golangci-lint run >> linter.txt
-  artifacts:
-    paths:
-      - backend/linter.txt
-    expire_in: 1 day
-  needs:
-    - module-build-job
-
 
 bl-unit-test-job:  
   stage: test   
