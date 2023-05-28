@@ -9,21 +9,13 @@ services:
   - docker:dind
 
 stages:
-  - image
   - module_build 
   - pre
   - test
   - build
   - extra
 
-# image-job:
-#   stage: image
-#   script:
-#     - echo "docker up"
-#   needs:
-#     - linter-job
-
-module-build-job:      
+backend-module-build-job:      
   stage: module_build
   when: always
   script:
@@ -37,18 +29,41 @@ module-build-job:
     expire_in: 1 hour
   
   
-linter-job:
+linter-backend-job:
   stage: pre
   allow_failure: true
   image: golangci/golangci-lint:v1.52.2
   script:
     - cd backend
     - go mod tidy
-    - golangci-lint run -E goconst,gofumpt,goimports --timeout 5m0s 
-    - cd ../consoleApp
-    - golangci-lint run -E goconst,gofumpt,goimports --timeout 5m0s 
-  dependencies:
-    - module-build-job
+    - golangci-lint run -E goconst,gofumpt --timeout 5m0s 
+  needs:
+    - backend-module-build-job
+
+
+console-module-build-job:      
+  stage: module_build
+  when: always
+  script:
+      - cd consoleApp 
+      - go mod init consoleApp
+      - go mod tidy
+  artifacts:
+    paths:
+      - consoleApp/go.sum
+      - consoleApp/go.mod
+    expire_in: 1 hour
+
+linter-console-job:
+  stage: pre
+  allow_failure: true
+  image: golangci/golangci-lint:v1.52.2
+  script:
+    - cd consoleApp
+    - go mod tidy
+    - golangci-lint run -E goconst,gofumpt --timeout 5m0s 
+  needs:
+    - console-module-build-job
 
 
 bl-unit-test-job:  
@@ -69,8 +84,8 @@ bl-unit-test-job:
       - backend/internal/services/implementation/pet.out
       - backend/internal/services/implementation/doctor.out
     expire_in: 1 hour
-  dependencies:
-    - module-build-job
+  needs:
+    - backend-module-build-job
 
 db-unit-test-job:  
   stage: test   
@@ -84,8 +99,8 @@ db-unit-test-job:
     paths:
       - backend/internal/services/implementation/unitDB.out
     expire_in: 1 hour
-  dependencies:
-    - module-build-job
+  needs:
+    - backend-module-build-job
 
 
 bl-db-test-job:  
@@ -105,7 +120,7 @@ bl-db-test-job:
   needs:
     - bl-unit-test-job
     - db-unit-test-job
-    - module-build-job
+    - backend-module-build-job
 
 
 build-job:    
@@ -124,7 +139,7 @@ build-job:
     - bl-unit-test-job
     - db-unit-test-job
     - bl-db-test-job
-    - module-build-job
+    - backend-module-build-job
 
   
 
