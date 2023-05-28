@@ -34,13 +34,12 @@ func (c *doctorServiceImplementation) SetRole() error {
 	return err
 }
 
-
 func checkShedule(start uint64, end uint64) error {
 	if start >= end {
 		return serviceErrors.ErrorWrongNewShedule
 	}
 
-	if start > 24 || start < 0 || end > 24 || end < 0 {
+	if start > 24 || end > 24 {
 		return serviceErrors.ErrorWrongNewShedule
 	}
 	return nil
@@ -111,7 +110,7 @@ func (d *doctorServiceImplementation) Login(login, password string) (*models.Doc
 		return nil, err
 	}
 
-	if d.hasher.CheckUnhashedValue(tempDoctor.Password, password) == false {
+	if !d.hasher.CheckUnhashedValue(tempDoctor.Password, password) { //== false
 		d.logger.Warn("DOCTOR! Error doctor password", "login", login)
 		return nil, serviceErrors.InvalidPassword
 	}

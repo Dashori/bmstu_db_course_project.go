@@ -244,7 +244,7 @@ func clientMenu(a *registry.AppServiceFields) error {
 2 -- зарегестрироваться
 Выберите действие: `
 
-	fmt.Printf(startMenu)
+	fmt.Printf("%s", startMenu)
 	var num int
 	_, err := fmt.Scanf("%d", &num)
 	if err != nil {

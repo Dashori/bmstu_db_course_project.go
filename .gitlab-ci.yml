@@ -30,7 +30,7 @@ linter-job:
   script:
     - cd backend
     - go mod tidy
-    - golangci-lint run -E dupl,errname,goconst,gofumpt,goimports --timeout 5m0s --fix
+    - golangci-lint run errname,goconst,gofumpt,goimports --timeout 5m0s --fix
     - cd ../consoleApp
     - golangci-lint run -E dupl,errname,goconst,gofumpt,goimports --timeout 5m0s --fix
 

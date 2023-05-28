@@ -71,7 +71,6 @@ func TestClientPostgresRepositoryCreate(t *testing.T) {
 			tt.CheckOutput(t, err)
 
 			err = clientRepository.Create(tt.InputData.client)
-
 			tt.CheckOutput(t, err)
 		})
 	}
@@ -87,7 +86,8 @@ func TestClientPostgresRepositoryCreate(t *testing.T) {
 			err := clientRepository.SetRole()
 			tt.CheckOutputHelp(t, err)
 
-			clientRepository.Create(tt.InputData.client)
+			err = clientRepository.Create(tt.InputData.client)
+			tt.CheckOutputHelp(t, err)
 
 			err = clientRepository.Create(tt.InputData.client)
 			tt.CheckOutput(t, err)

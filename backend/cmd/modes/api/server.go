@@ -4,8 +4,8 @@ import (
 	registry "backend/cmd/registry"
 
 	"backend/cmd/modes/api/middlewares"
-	"github.com/gin-gonic/gin"
 	"fmt"
+	"github.com/gin-gonic/gin"
 )
 
 type services struct {
@@ -46,11 +46,14 @@ func SetupServer(a *registry.App) *gin.Engine {
 
 	port := a.Config.Port
 	adress := a.Config.Address
-	router.Run(adress + port)
+	err := router.Run(adress + port)
+
+	if err != nil {
+		panic(err)
+	}
 
 	return router
 }
-
 
 type Role struct {
 	Role string
@@ -64,12 +67,17 @@ func (t *services) setRole(c *gin.Context) {
 		return
 	}
 
-	if role.Role == "doctor"{
+	if role.Role == "doctor" {
 		err = t.Services.DoctorService.SetRole()
-	} else if role.Role == "client"{
+	} else if role.Role == "client" {
 		err = t.Services.ClientService.SetRole()
 	} else {
 		jsonBadRequestResponse(c, fmt.Errorf("Такой роли не существует!"))
+	}
+
+	if err != nil {
+		jsonInternalServerErrorResponse(c, err)
+		return
 	}
 
 	jsonStatusOkResponse(c)

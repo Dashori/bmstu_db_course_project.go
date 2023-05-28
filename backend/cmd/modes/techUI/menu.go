@@ -13,7 +13,7 @@ func RunMenu(a *registry.AppServiceFields) error {
 1 -- работник клиники
 2 -- я гость, мне просто врачей посмотреть
 Выберите роль: `
-	fmt.Printf(startPosition)
+	fmt.Printf("%s", startPosition)
 
 	var who int
 	fmt.Scanf("%d", &who)

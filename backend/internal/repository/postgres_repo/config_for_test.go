@@ -9,9 +9,6 @@ import (
 	"os"
 )
 
-var configFileName = "config.json"
-var pathToConfig = "../../../config"
-
 const (
 	USER     = "dashori"
 	PASSWORD = "parasha"

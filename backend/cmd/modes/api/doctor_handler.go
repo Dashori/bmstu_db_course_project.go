@@ -15,7 +15,7 @@ func (t *services) createDoctor(c *gin.Context) {
 	}
 
 	res, err := t.Services.DoctorService.Create(doctor, doctor.Password)
-	if errorHandler(c, err) != true {
+	if !errorHandler(c, err) { //!= true {
 		return
 	}
 
@@ -37,7 +37,7 @@ func (t *services) loginDoctor(c *gin.Context) {
 	}
 
 	res, err := t.Services.DoctorService.Login(doctor.Login, doctor.Password)
-	if errorHandler(c, err) != true {
+	if !errorHandler(c, err) { //!= true {
 		return
 	}
 
@@ -53,7 +53,7 @@ func (t *services) loginDoctor(c *gin.Context) {
 func (t *services) getAllDoctors(c *gin.Context) {
 
 	doctors, err := t.Services.DoctorService.GetAllDoctors()
-	if errorHandler(c, err) != true {
+	if !errorHandler(c, err) { //!= true {
 		return
 	}
 
@@ -63,12 +63,12 @@ func (t *services) getAllDoctors(c *gin.Context) {
 func (t *services) doctorInfo(c *gin.Context) {
 
 	user_id, role, err := token.ExtractTokenIdAndRole(c)
-	if errorHandlerDoctorAuth(c, err, role) != true {
+	if !errorHandlerDoctorAuth(c, err, role) { //!= true {
 		return
 	}
 
 	res, err := t.Services.DoctorService.GetDoctorById(user_id)
-	if errorHandler(c, err) != true {
+	if !errorHandler(c, err) { //!= true {
 		return
 	}
 
@@ -78,17 +78,17 @@ func (t *services) doctorInfo(c *gin.Context) {
 func (t *services) doctorRecords(c *gin.Context) {
 
 	user_id, role, err := token.ExtractTokenIdAndRole(c)
-	if errorHandlerDoctorAuth(c, err, role) != true {
+	if !errorHandlerDoctorAuth(c, err, role) { //!= true {
 		return
 	}
 
 	doctor, err := t.Services.DoctorService.GetDoctorById(user_id)
-	if errorHandler(c, err) != true {
+	if !errorHandler(c, err) { //!= true {
 		return
 	}
 
 	records, err := t.Services.RecordService.GetAllRecords(doctor.DoctorId, 0)
-	if errorHandler(c, err) != true {
+	if !errorHandler(c, err) { //!= true {
 		return
 	}
 
@@ -109,18 +109,18 @@ func (t *services) doctorShedule(c *gin.Context) {
 	}
 
 	user_id, role, err := token.ExtractTokenIdAndRole(c)
-	if errorHandlerDoctorAuth(c, err, role) != true {
+	if !errorHandlerDoctorAuth(c, err, role) { //!= true {
 		return
 	}
 
 	doctor, err := t.Services.DoctorService.GetDoctorById(user_id)
-	if errorHandler(c, err) != true {
+	if !errorHandler(c, err) { //!= true {
 		return
 	}
 
 	err = t.Services.DoctorService.UpdateShedule(doctor.DoctorId,
 		uint64(shedule.StartTime), uint64(shedule.EndTime))
-	if errorHandler(c, err) != true {
+	if !errorHandler(c, err) { //!= true {
 		return
 	}
 

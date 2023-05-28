@@ -8,7 +8,6 @@ import (
 	"backend/internal/services"
 	servicesImplementation "backend/internal/services/implementation"
 	"github.com/charmbracelet/log"
-	"github.com/golang/mock/gomock"
 	"os"
 )
 
@@ -24,7 +23,6 @@ type App struct {
 	Repositories *AppRepositoryFields
 	Services     *AppServiceFields
 	Logger       *log.Logger
-	ctrl         *gomock.Controller
 }
 
 type AppRepositoryFields struct {

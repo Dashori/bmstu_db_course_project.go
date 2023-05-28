@@ -114,7 +114,7 @@ func (r *recordServiceImplementation) CreateRecord(record *models.Record) error 
 	r.logger.Debug("RECORD! Start CreateRecord with params", "client", record.ClientId, "pet", record.PetId,
 		"doctor", record.DoctorId, "DatetimeStart", record.DatetimeStart, "DatetimeEnd", record.DatetimeEnd)
 
-	if CheckTime(record) == false {
+	if !CheckTime(record) { // == false
 		r.logger.Warn("RECORD! Error in CreateRecord", "start time", record.DatetimeStart,
 			"end time", record.DatetimeEnd)
 		return serviceErrors.ErrorCreateRecordTime
@@ -126,7 +126,7 @@ func (r *recordServiceImplementation) CreateRecord(record *models.Record) error 
 		return err
 	}
 
-	if isClientPetOwner(pets, record.PetId) == false {
+	if !isClientPetOwner(pets, record.PetId) { //== false
 		r.logger.Warn("RECORD! Client is not the pet owner", "client", record.ClientId, "pet", record.PetId)
 		return serviceErrors.NotClientPet
 	}
@@ -137,7 +137,7 @@ func (r *recordServiceImplementation) CreateRecord(record *models.Record) error 
 		return serviceErrors.DoctorDoesNotExists
 	}
 
-	if CheckDoctorTime(doctor, record) == false {
+	if !CheckDoctorTime(doctor, record) { //== false
 		r.logger.Warn("RECORD! Error doctor time for new record", "doctorId", doctor.DoctorId)
 		return serviceErrors.ErrorDoctorTime
 	}
@@ -148,7 +148,7 @@ func (r *recordServiceImplementation) CreateRecord(record *models.Record) error 
 		return err
 	}
 
-	if CheckOtherRecords(records, record) == false {
+	if !CheckOtherRecords(records, record) { //== false
 		r.logger.Warn("RECORD! Error, other record has same time")
 		return serviceErrors.TimeIsTaken
 	}

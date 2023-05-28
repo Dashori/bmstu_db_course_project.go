@@ -9,9 +9,6 @@ import (
 	"os"
 )
 
-const configFileName = "config.json"
-const pathToConfig = "../../../config"
-
 const (
 	USER     = "dashori"
 	PASSWORD = "parasha"

@@ -17,7 +17,7 @@ func (t *services) createClient(c *gin.Context) {
 	}
 
 	res, err := t.Services.ClientService.Create(client, client.Password)
-	if errorHandler(c, err) != true {
+	if !errorHandler(c, err) { //!= true
 		return
 	}
 
@@ -41,7 +41,7 @@ func (t *services) loginClient(c *gin.Context) {
 	}
 
 	res, err := t.Services.ClientService.Login(client.Login, client.Password)
-	if errorHandler(c, err) != true {
+	if !errorHandler(c, err) { // != true
 		return
 	}
 
@@ -58,12 +58,12 @@ func (t *services) loginClient(c *gin.Context) {
 func (t *services) infoClient(c *gin.Context) {
 
 	user_id, role, err := token.ExtractTokenIdAndRole(c)
-	if errorHandlerClientAuth(c, err, role) != true {
+	if !errorHandlerClientAuth(c, err, role) { //!= true
 		return
 	}
 
 	res, err := t.Services.ClientService.GetClientById(user_id)
-	if errorHandler(c, err) != true {
+	if !errorHandler(c, err) { // != true
 		return
 	}
 
@@ -73,17 +73,17 @@ func (t *services) infoClient(c *gin.Context) {
 func (t *services) ClientRecords(c *gin.Context) {
 
 	user_id, role, err := token.ExtractTokenIdAndRole(c)
-	if errorHandlerClientAuth(c, err, role) != true {
+	if !errorHandlerClientAuth(c, err, role) { //!= true
 		return
 	}
 
 	client, err := t.Services.ClientService.GetClientById(user_id)
-	if errorHandler(c, err) != true {
+	if !errorHandler(c, err) { //!= true
 		return
 	}
 
 	records, err := t.Services.RecordService.GetAllRecords(0, client.ClientId)
-	if errorHandler(c, err) != true {
+	if !errorHandler(c, err) { //!= true
 		return
 	}
 
@@ -93,17 +93,17 @@ func (t *services) ClientRecords(c *gin.Context) {
 func (t *services) ClientPets(c *gin.Context) {
 
 	user_id, role, err := token.ExtractTokenIdAndRole(c)
-	if errorHandlerClientAuth(c, err, role) != true {
+	if !errorHandlerClientAuth(c, err, role) { //!= true
 		return
 	}
 
 	client, err := t.Services.ClientService.GetClientById(user_id)
-	if errorHandler(c, err) != true {
+	if !errorHandler(c, err) { //!= true
 		return
 	}
 
 	pets, err := t.Services.PetService.GetAllByClient(client.ClientId)
-	if errorHandler(c, err) != true {
+	if !errorHandler(c, err) { //!= true
 		return
 	}
 
@@ -113,12 +113,12 @@ func (t *services) ClientPets(c *gin.Context) {
 func (t *services) NewPet(c *gin.Context) {
 
 	user_id, role, err := token.ExtractTokenIdAndRole(c)
-	if errorHandlerClientAuth(c, err, role) != true {
+	if !errorHandlerClientAuth(c, err, role) { //!= true {
 		return
 	}
 
 	client, err := t.Services.ClientService.GetClientById(user_id)
-	if errorHandler(c, err) != true {
+	if !errorHandler(c, err) { //!= true {
 		return
 	}
 
@@ -131,7 +131,7 @@ func (t *services) NewPet(c *gin.Context) {
 	}
 
 	err = t.Services.PetService.Create(pet, client.Login)
-	if errorHandler(c, err) != true {
+	if !errorHandler(c, err) { //!= true {
 		return
 	}
 
@@ -141,12 +141,12 @@ func (t *services) NewPet(c *gin.Context) {
 func (t *services) DeletePet(c *gin.Context) {
 
 	user_id, role, err := token.ExtractTokenIdAndRole(c)
-	if errorHandlerClientAuth(c, err, role) != true {
+	if !errorHandlerClientAuth(c, err, role) { //!= true {
 		return
 	}
 
 	client, err := t.Services.ClientService.GetClientById(user_id)
-	if errorHandler(c, err) != true {
+	if !errorHandler(c, err) { //!= true {
 		return
 	}
 
@@ -159,7 +159,7 @@ func (t *services) DeletePet(c *gin.Context) {
 	}
 
 	err = t.Services.PetService.Delete(uint64(pet.PetId), client.ClientId)
-	if errorHandler(c, err) != true {
+	if !errorHandler(c, err) { //!= true {
 		return
 	}
 
@@ -178,12 +178,12 @@ type Record struct {
 func (t *services) NewRecord(c *gin.Context) {
 
 	user_id, role, err := token.ExtractTokenIdAndRole(c)
-	if errorHandlerClientAuth(c, err, role) != true {
+	if !errorHandlerClientAuth(c, err, role) { //!= true {
 		return
 	}
 
 	client, err := t.Services.ClientService.GetClientById(user_id)
-	if errorHandler(c, err) != true {
+	if !errorHandler(c, err) { //!= true {
 		return
 	}
 
@@ -202,7 +202,7 @@ func (t *services) NewRecord(c *gin.Context) {
 		DoctorId: uint64(record.DoctorId), DatetimeStart: datetimeStart, DatetimeEnd: datetimeEnd}
 
 	err = t.Services.RecordService.CreateRecord(&newRecord)
-	if errorHandler(c, err) != true {
+	if !errorHandler(c, err) { //!= true {
 		return
 	}
 
