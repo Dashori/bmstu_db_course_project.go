@@ -30,14 +30,10 @@ linter-job:
   script:
     - cd backend
     - go mod tidy
-    - golangci-lint run -E dupl,errname,goconst,gofumpt,goimports --timeout 5m0s --fix >> linter_console.txt
-    # - cd ../consoleApp
-    # - golangci-lint run >> linter_console.txt
-  artifacts:
-    paths:
-      - backend/linter_server.txt
-  #     # - consoleApp/linter_console.txt
-    expire_in: 1 day
+    - golangci-lint run -E dupl,errname,goconst,gofumpt,goimports --timeout 5m0s --fix
+    - cd ../consoleApp
+    - golangci-lint run -E dupl,errname,goconst,gofumpt,goimports --timeout 5m0s --fix
+
 
 module-build-job:      
   stage: module_build
