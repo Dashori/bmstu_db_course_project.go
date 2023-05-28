@@ -30,7 +30,7 @@ linter-job:
   script:
     - cd backend
     - go mod tidy
-    - golangci-lint run -E dupl, errname,goconst,gofumpt,goimports --timeout 5m0s --fix
+    - golangci-lint run -E dupl,errname,goconst,gofumpt,goimports --timeout 5m0s --fix
     - cd ../consoleApp
     - golangci-lint run -E dupl,errname,goconst,gofumpt,goimports --timeout 5m0s --fix
 
@@ -40,7 +40,14 @@ module-build-job:
   when: always
   script:
       - cd backend 
+      - go init module backend
       - go mod tidy
+  artifacts:
+    paths:
+      - backend/go.sum
+      - backend/go.mod
+    expire_in: 1 hour
+  
   
 
 bl-unit-test-job:  
@@ -62,7 +69,7 @@ bl-unit-test-job:
       - backend/internal/services/implementation/pet.out
       - backend/internal/services/implementation/doctor.out
     expire_in: 1 hour
-  needs:
+  dependencies:
     - module-build-job
 
 db-unit-test-job:  
@@ -78,7 +85,7 @@ db-unit-test-job:
     paths:
       - backend/internal/services/implementation/unitDB.out
     expire_in: 1 hour
-  needs:
+  dependencies:
     - module-build-job
 
 
@@ -98,9 +105,10 @@ bl-db-test-job:
       - backend/internal/services/implementation/petDB.out
     expire_in: 1 hour
   needs:
-    - module-build-job
     - bl-unit-test-job
     - db-unit-test-job
+  dependencies:
+    - module-build-job
 
 
 build-job:    
@@ -120,6 +128,10 @@ build-job:
     - bl-unit-test-job
     - db-unit-test-job
     - bl-db-test-job
+  dependencies:
+    - module-build-job
+
+  
 
 
 
