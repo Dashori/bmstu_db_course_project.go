@@ -25,8 +25,9 @@ func main() {
 		app.Logger.Info("Start with tech ui!")
 		err = menu.RunMenu(app.Services)
 		if err != nil {
-			log.Fatal(err)
-		}	
+		log.Fatal(err)
+	}
+
 	} else if app.Config.Mode == "api" {
 		app.Logger.Info("Start with api!")
 		api.SetupServer(&app)

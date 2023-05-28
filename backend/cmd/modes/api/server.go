@@ -49,7 +49,7 @@ func SetupServer(a *registry.App) *gin.Engine {
 	err := router.Run(adress + port)
 
 	if err != nil {
-		panic(err)
+		return nil
 	}
 
 	return router

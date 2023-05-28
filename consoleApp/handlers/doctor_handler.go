@@ -98,9 +98,9 @@ func GetRecordsDoctor(client *http.Client, token string) (*http.Response, error)
 	url := "http://" + adress + ":" + port + "/api/doctor/records"
 
 	request, err := http.NewRequest("GET", url, nil)
-	// if err != nil {
-	// 	return nil, errors.ErrorNewRequest
-	// }
+	if err != nil {
+		return nil, errors.ErrorNewRequest
+	}
 
 	request.Header.Set("Content-Type", "application/json")
 	request.Header.Set("Authorization", "Bearer "+token)
