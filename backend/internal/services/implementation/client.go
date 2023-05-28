@@ -95,7 +95,7 @@ func (c *clientServiceImplementation) Login(login, password string) (*models.Cli
 		return nil, err
 	}
 
-	if !c.hasher.CheckUnhashedValue(tempClient.Password, password) { //== false
+	if c.hasher.CheckUnhashedValue(tempClient.Password, password) == false
 		c.logger.Warn("CLIENT! Error client password", "login", login)
 		return nil, serviceErrors.InvalidPassword
 	}
