@@ -11,7 +11,6 @@ services:
 stages: 
   - pre
   - image
-  - linter
   - module_build
   - test
   - build
@@ -25,26 +24,29 @@ stages:
 #     - linter-job
 
 linter-job:
-  stage: linter
+  stage: pre
+  allow_failure: true
   image: golangci/golangci-lint:v1.52.2
   script:
     - cd backend
     - go mod tidy
-    - golangci-lint run errname,goconst,gofumpt,goimports --timeout 5m0s --fix
+    - golangci-lint run -E dupl, errname,goconst,gofumpt,goimports --timeout 5m0s --fix
     - cd ../consoleApp
     - golangci-lint run -E dupl,errname,goconst,gofumpt,goimports --timeout 5m0s --fix
 
 
 module-build-job:      
   stage: module_build
-  allow_failure: true
+  when: always
   script:
       - cd backend 
       - go mod tidy
+  
 
 bl-unit-test-job:  
   stage: test   
   allow_failure: true
+  when: always
   script:
     - cd backend 
     - go mod tidy
@@ -66,6 +68,7 @@ bl-unit-test-job:
 db-unit-test-job:  
   stage: test   
   allow_failure: true
+  when: always
   script:
     - cd backend 
     - go mod tidy
@@ -82,6 +85,7 @@ db-unit-test-job:
 bl-db-test-job:  
   stage: test  
   allow_failure: true 
+  when: always
   script:
     - cd backend 
     - go mod tidy
@@ -102,6 +106,7 @@ bl-db-test-job:
 build-job:    
   stage: build
   allow_failure: true
+  when: always
   script:
     - cd backend 
     - go mod tidy
