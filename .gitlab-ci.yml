@@ -23,24 +23,12 @@ stages:
 #   needs:
 #     - linter-job
 
-linter-job:
-  stage: pre
-  allow_failure: true
-  image: golangci/golangci-lint:v1.52.2
-  script:
-    - cd backend
-    - go mod tidy
-    - golangci-lint run -E errname,goconst,gofumpt,goimports --timeout 5m0s --fix
-    - cd ../consoleApp
-    - golangci-lint run -E errname,goconst,gofumpt,goimports --timeout 5m0s --fix
-
-
 module-build-job:      
   stage: module_build
   when: always
   script:
       - cd backend 
-      - go init module backend
+      - go mod init backend
       - go mod tidy
   artifacts:
     paths:
@@ -49,6 +37,19 @@ module-build-job:
     expire_in: 1 hour
   
   
+linter-job:
+  stage: pre
+  allow_failure: true
+  image: golangci/golangci-lint:v1.52.2
+  script:
+    - cd backend
+    - go mod tidy
+    - golangci-lint run -E goconst,gofumpt,goimports --timeout 5m0s 
+    - cd ../consoleApp
+    - golangci-lint run -E goconst,gofumpt,goimports --timeout 5m0s 
+  dependencies:
+    - module-build-job
+
 
 bl-unit-test-job:  
   stage: test   
