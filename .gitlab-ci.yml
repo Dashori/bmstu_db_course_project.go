@@ -31,15 +31,15 @@ linter-job:
     - cd backend
     - go mod init backend
     - go mod tidy
-    - golangci-lint run >> linter_server.txt
+    # - golangci-lint run >> linter_server.txt
     - make lint
     # - cd ../consoleApp
     # - golangci-lint run >> linter_console.txt
-  artifacts:
-    paths:
-      - backend/linter_server.txt
-      # - consoleApp/linter_console.txt
-    expire_in: 1 day
+  # artifacts:
+  #   paths:
+  #     # - backend/linter_server.txt
+  #     # - consoleApp/linter_console.txt
+  #   expire_in: 1 day
 
 module-build-job:      
   stage: module_build
