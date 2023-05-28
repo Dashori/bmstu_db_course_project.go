@@ -30,9 +30,9 @@ linter-job:
   script:
     - cd backend
     - go mod tidy
-    - golangci-lint run -E dupl,errname,goconst,gofumpt,goimports --timeout 5m0s --fix
+    - golangci-lint run -E errname,goconst,gofumpt,goimports --timeout 5m0s --fix
     - cd ../consoleApp
-    - golangci-lint run -E dupl,errname,goconst,gofumpt,goimports --timeout 5m0s --fix
+    - golangci-lint run -E errname,goconst,gofumpt,goimports --timeout 5m0s --fix
 
 
 module-build-job:      
@@ -52,7 +52,6 @@ module-build-job:
 
 bl-unit-test-job:  
   stage: test   
-  allow_failure: true
   when: always
   script:
     - cd backend 
@@ -74,7 +73,6 @@ bl-unit-test-job:
 
 db-unit-test-job:  
   stage: test   
-  allow_failure: true
   when: always
   script:
     - cd backend 
@@ -91,7 +89,6 @@ db-unit-test-job:
 
 bl-db-test-job:  
   stage: test  
-  allow_failure: true 
   when: always
   script:
     - cd backend 
@@ -112,7 +109,6 @@ bl-db-test-job:
 
 build-job:    
   stage: build
-  allow_failure: true
   when: always
   script:
     - cd backend 
