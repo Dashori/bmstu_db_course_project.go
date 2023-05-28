@@ -8,10 +8,10 @@ variables:
 services:
   - docker:dind
 
-stages: 
-  - pre
+stages:
   - image
-  - module_build
+  - module_build 
+  - pre
   - test
   - build
   - extra
