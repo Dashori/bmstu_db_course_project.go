@@ -107,7 +107,6 @@ bl-db-test-job:
   needs:
     - bl-unit-test-job
     - db-unit-test-job
-  dependencies:
     - module-build-job
 
 
@@ -128,11 +127,9 @@ build-job:
     - bl-unit-test-job
     - db-unit-test-job
     - bl-db-test-job
-  dependencies:
     - module-build-job
 
   
-
 
 
 # research-job:   # This job runs in the test stage.
