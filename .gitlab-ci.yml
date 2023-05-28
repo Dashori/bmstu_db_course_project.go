@@ -29,10 +29,9 @@ linter-job:
   image: golangci/golangci-lint:v1.52.2
   script:
     - cd backend
-    - go mod init backend
     - go mod tidy
     # - golangci-lint run >> linter_server.txt
-    - make lint
+    - golangci-lint run -E dupl,errname,goconst,gofumpt,goimports --timeout 5m0s --fix
     # - cd ../consoleApp
     # - golangci-lint run >> linter_console.txt
   # artifacts:
@@ -45,7 +44,6 @@ module-build-job:
   stage: module_build
   script:
       - cd backend 
-      - go mod init backend
       - go mod tidy
   needs:
       - linter-job
@@ -54,7 +52,6 @@ bl-unit-test-job:
   stage: test   
   script:
     - cd backend 
-    - go mod init backend
     - go mod tidy
     - cd internal/services/implementation
     - go test client_test.go client.go -v -cover -coverprofile=client.out
@@ -75,7 +72,6 @@ db-unit-test-job:
   stage: test   
   script:
     - cd backend 
-    - go mod init backend
     - go mod tidy
     - cd internal/services/implementation
     - go test -v -cover -coverprofile=DB.out
@@ -91,7 +87,6 @@ bl-db-test-job:
   stage: test   
   script:
     - cd backend 
-    - go mod init backend
     - go mod tidy
     - cd internal/services/implementation
     - go test recordPostgres_test.go record.go record_test.go config_for_test.go -v -cover -coverprofile=recordDB.out
@@ -111,7 +106,6 @@ build-job:
   stage: build
   script:
     - cd backend 
-    - go mod init backend
     - go mod tidy
     - cd cmd
     - go build main.go
