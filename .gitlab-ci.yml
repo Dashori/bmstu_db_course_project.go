@@ -9,14 +9,13 @@ services:
   - docker:dind
 
 stages:
-  - module_build 
   - pre
   - test
   - build
-  - extra
+  - research
 
 backend-module-build-job:      
-  stage: module_build
+  stage: pre
   when: always
   script:
       - cd backend 
@@ -42,7 +41,7 @@ linter-backend-job:
 
 
 console-module-build-job:      
-  stage: module_build
+  stage: pre 
   when: always
   script:
       - cd consoleApp 
@@ -159,22 +158,10 @@ console-build-job:
     - linter-console-job
    
 
-  
-
-
-# research-job:   # This job runs in the test stage.
-#   stage: extra    # It only starts when the job in the build stage completes successfully.
-#   script:
-#     - echo "Running unit tests..."
-#   when: manual
-#   needs:
-#    - build-job
-
-# documentation-job:   # This job runs in the test stage.
-#   stage: extra    # It only starts when the job in the build stage completes successfully.
-#   script:
-#     - echo "Running unit tests..."
-#   when: manual
-#   needs:
-#     - build-job
-
+research-job:   
+  stage: research  
+  script:
+    - echo "Running research"
+  when: always
+  needs:
+   - backend-module-build-job

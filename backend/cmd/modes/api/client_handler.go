@@ -16,6 +16,12 @@ func (t *services) createClient(c *gin.Context) {
 		return
 	}
 
+	err = t.Services.ClientService.SetRole()
+	if err != nil {
+		jsonInternalServerErrorResponse(c, err)
+		return
+	}
+
 	res, err := t.Services.ClientService.Create(client, client.Password)
 	if !errorHandler(c, err) { //!= true
 		return
@@ -35,6 +41,12 @@ func (t *services) loginClient(c *gin.Context) {
 	var client *models.Client
 	err := c.ShouldBindJSON(&client)
 
+	if err != nil {
+		jsonInternalServerErrorResponse(c, err)
+		return
+	}
+
+	err = t.Services.ClientService.SetRole()
 	if err != nil {
 		jsonInternalServerErrorResponse(c, err)
 		return
@@ -62,6 +74,12 @@ func (t *services) infoClient(c *gin.Context) {
 		return
 	}
 
+	err = t.Services.ClientService.SetRole()
+	if err != nil {
+		jsonInternalServerErrorResponse(c, err)
+		return
+	}
+
 	res, err := t.Services.ClientService.GetClientById(user_id)
 	if !errorHandler(c, err) { // != true
 		return
@@ -74,6 +92,12 @@ func (t *services) ClientRecords(c *gin.Context) {
 
 	user_id, role, err := token.ExtractTokenIdAndRole(c)
 	if !errorHandlerClientAuth(c, err, role) { //!= true
+		return
+	}
+
+	err = t.Services.ClientService.SetRole()
+	if err != nil {
+		jsonInternalServerErrorResponse(c, err)
 		return
 	}
 
@@ -94,6 +118,12 @@ func (t *services) ClientPets(c *gin.Context) {
 
 	user_id, role, err := token.ExtractTokenIdAndRole(c)
 	if !errorHandlerClientAuth(c, err, role) { //!= true
+		return
+	}
+
+	err = t.Services.ClientService.SetRole()
+	if err != nil {
+		jsonInternalServerErrorResponse(c, err)
 		return
 	}
 
@@ -130,6 +160,12 @@ func (t *services) NewPet(c *gin.Context) {
 		return
 	}
 
+	err = t.Services.ClientService.SetRole()
+	if err != nil {
+		jsonInternalServerErrorResponse(c, err)
+		return
+	}
+
 	err = t.Services.PetService.Create(pet, client.Login)
 	if !errorHandler(c, err) { //!= true {
 		return
@@ -142,6 +178,12 @@ func (t *services) DeletePet(c *gin.Context) {
 
 	user_id, role, err := token.ExtractTokenIdAndRole(c)
 	if !errorHandlerClientAuth(c, err, role) { //!= true {
+		return
+	}
+
+	err = t.Services.ClientService.SetRole()
+	if err != nil {
+		jsonInternalServerErrorResponse(c, err)
 		return
 	}
 
@@ -179,6 +221,12 @@ func (t *services) NewRecord(c *gin.Context) {
 
 	user_id, role, err := token.ExtractTokenIdAndRole(c)
 	if !errorHandlerClientAuth(c, err, role) { //!= true {
+		return
+	}
+
+	err = t.Services.ClientService.SetRole()
+	if err != nil {
+		jsonInternalServerErrorResponse(c, err)
 		return
 	}
 

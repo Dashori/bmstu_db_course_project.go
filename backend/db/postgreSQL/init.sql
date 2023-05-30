@@ -54,20 +54,14 @@ create table specializations
 drop table if exists doctors_specializations cascade;
 create table doctors_specializations
 (
-	id_spec int references specializations(id_spec), 
-	id_doctor int references doctors(id_doctor),
+	id_spec int references specializations(id_spec) on delete cascade, 
+	id_doctor int references doctors(id_doctor) on delete cascade,
 	primary key (id_spec, id_doctor)
 );
 
 
-create role doctor login;
-grant select, insert, update(login, password, start_time, end_time) on doctors to doctor;
-grant usage, select on sequence doctors_id_doctor_seq to doctor;
-grant select, insert on specializations to doctor;
-grant select, insert on doctors_specializations to doctor;
-grant select (id_client, login) on clients to doctor;
-grant select, update on pets to doctor;
-grant select, insert on records to doctor;
+create role guest login;
+grant select on doctors to guest;
 
 create role client login;
 grant select, insert, update(login, password) on clients to client;
@@ -79,6 +73,24 @@ grant select, insert, delete, update on pets to client;
 grant usage, select on sequence pets_id_pet_seq to client;
 grant select, insert on records to client;
 grant usage, select on sequence records_id_record_seq to client;
+
+
+create role doctor login;
+grant select, insert, update(login, password, start_time, end_time) on doctors to doctor;
+grant usage, select on sequence doctors_id_doctor_seq to doctor;
+grant select, insert on specializations to doctor;
+grant select, insert on doctors_specializations to doctor;
+grant select (id_client, login) on clients to doctor;
+grant select, update on pets to doctor;
+grant select, insert on records to doctor;
+
+
+create role administrator login superuser;
+
+
+
+
+
 
 create or replace function get_avg_health()
 returns table(type text, avg_health float) as

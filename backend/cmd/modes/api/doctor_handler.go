@@ -14,6 +14,12 @@ func (t *services) createDoctor(c *gin.Context) {
 		return
 	}
 
+	err = t.Services.DoctorService.SetRole()
+	if err != nil {
+		jsonInternalServerErrorResponse(c, err)
+		return
+	}
+
 	res, err := t.Services.DoctorService.Create(doctor, doctor.Password)
 	if !errorHandler(c, err) { //!= true {
 		return
@@ -31,6 +37,12 @@ func (t *services) createDoctor(c *gin.Context) {
 func (t *services) loginDoctor(c *gin.Context) {
 	var doctor *models.Doctor
 	err := c.ShouldBindJSON(&doctor)
+	if err != nil {
+		jsonInternalServerErrorResponse(c, err)
+		return
+	}
+	
+	err = t.Services.DoctorService.SetRole()
 	if err != nil {
 		jsonInternalServerErrorResponse(c, err)
 		return
@@ -67,6 +79,12 @@ func (t *services) doctorInfo(c *gin.Context) {
 		return
 	}
 
+	err = t.Services.DoctorService.SetRole()
+	if err != nil {
+		jsonInternalServerErrorResponse(c, err)
+		return
+	}
+
 	res, err := t.Services.DoctorService.GetDoctorById(user_id)
 	if !errorHandler(c, err) { //!= true {
 		return
@@ -79,6 +97,12 @@ func (t *services) doctorRecords(c *gin.Context) {
 
 	user_id, role, err := token.ExtractTokenIdAndRole(c)
 	if !errorHandlerDoctorAuth(c, err, role) { //!= true {
+		return
+	}
+
+	err = t.Services.DoctorService.SetRole()
+	if err != nil {
+		jsonInternalServerErrorResponse(c, err)
 		return
 	}
 
@@ -112,6 +136,13 @@ func (t *services) doctorShedule(c *gin.Context) {
 	if !errorHandlerDoctorAuth(c, err, role) { //!= true {
 		return
 	}
+
+	err = t.Services.DoctorService.SetRole()
+	if err != nil {
+		jsonInternalServerErrorResponse(c, err)
+		return
+	}
+
 
 	doctor, err := t.Services.DoctorService.GetDoctorById(user_id)
 	if !errorHandler(c, err) { //!= true {
