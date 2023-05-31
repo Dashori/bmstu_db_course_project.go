@@ -149,9 +149,8 @@ func researchCreateRecordWithTrigger(count int) (int, int, error) {
 			errorCount += 1
 		} else {
 			successCount += 1
+			result += duration.Nanoseconds()
 		}
-
-		result += duration.Nanoseconds()
 
 		err = (*pets).Delete(petId) // при удалении pet удалится и запись в records
 
@@ -226,6 +225,7 @@ func researchCreateRecordWithoutTrigger(count int) (int, int, error) {
 			errorCount += 1
 		} else {
 			successCount++
+			result += duration.Nanoseconds()
 		}
 
 		result += duration.Nanoseconds()
