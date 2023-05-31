@@ -1,1 +1,170 @@
-git 
+image: erlendum/golang-dind
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_TLS_CERTDIR: ""
+
+services:
+  - docker:dind
+
+stages:
+  - pre
+  - test
+  - build
+  - research
+
+backend-module-build-job:      
+  stage: pre
+  when: always
+  script:
+      - cd backend 
+      - go mod init backend
+      - go mod tidy
+  artifacts:
+    paths:
+      - backend/go.sum
+      - backend/go.mod
+    expire_in: 1 hour
+  
+  
+linter-backend-job:
+  stage: pre
+  allow_failure: true
+  image: golangci/golangci-lint:v1.52.2
+  script:
+    - cd backend
+    - go mod tidy
+    - golangci-lint run --timeout 3m0s
+  needs:
+    - backend-module-build-job
+
+
+console-module-build-job:      
+  stage: pre 
+  when: always
+  script:
+      - cd consoleApp 
+      - go mod init consoleApp
+      - go mod tidy
+  artifacts:
+    paths:
+      - consoleApp/go.sum
+      - consoleApp/go.mod
+    expire_in: 1 hour
+
+linter-console-job:
+  stage: pre
+  allow_failure: true
+  image: golangci/golangci-lint:v1.52.2
+  script:
+    - cd consoleApp
+    - go mod tidy
+    - golangci-lint run --timeout 3m0s
+  needs:
+    - console-module-build-job
+
+
+bl-unit-test-job:  
+  stage: test   
+  when: always
+  script:
+    - cd backend 
+    - go mod tidy
+    - cd internal/services/implementation
+    - go test client_test.go client.go -v -cover -coverprofile=client.out
+    - go test record.go record_test.go -v -cover -coverprofile=record.out
+    - go test pet_test.go pet.go -v -cover -coverprofile=pet.out
+    - go test doctor.go doctor_test.go -v -cover  -coverprofile=doctor.out
+  artifacts:
+    paths:
+      - backend/internal/services/implementation/client.out
+      - backend/internal/services/implementation/record.out
+      - backend/internal/services/implementation/pet.out
+      - backend/internal/services/implementation/doctor.out
+    expire_in: 1 hour
+  needs:
+    - backend-module-build-job
+    - linter-backend-job
+
+db-unit-test-job:  
+  stage: test   
+  when: always
+  script:
+    - cd backend 
+    - go mod tidy
+    - cd internal/services/implementation
+    - go test -v -cover -coverprofile=DB.out
+  artifacts:
+    paths:
+      - backend/internal/services/implementation/unitDB.out
+    expire_in: 1 hour
+  needs:
+    - backend-module-build-job
+    - linter-backend-job
+
+
+bl-db-test-job:  
+  stage: test  
+  when: always
+  script:
+    - cd backend 
+    - go mod tidy
+    - cd internal/services/implementation
+    - go test recordPostgres_test.go record.go record_test.go config_for_test.go -v -cover -coverprofile=recordDB.out
+    - go test petPostgres_test.go pet.go pet_test.go config_for_test.go -v -cover -coverprofile=petDB.out
+  artifacts:
+    paths:
+      - backend/internal/services/implementation/recordDB.out
+      - backend/internal/services/implementation/petDB.out
+    expire_in: 1 hour
+  needs:
+    - backend-module-build-job
+    - bl-unit-test-job
+    - db-unit-test-job
+
+
+backend-build-job:    
+  stage: build
+  when: always
+  script:
+    - cd backend 
+    - go mod tidy
+    - cd cmd
+    - go build main.go
+  artifacts:
+    paths:
+      - backend/cmd/main
+    expire_in: 1 hour
+  needs:
+    - backend-module-build-job
+    - bl-unit-test-job
+    - db-unit-test-job
+    - bl-db-test-job
+
+console-build-job:    
+  stage: build
+  when: always
+  script:
+    - cd consoleApp 
+    - go mod tidy
+    - go build main.go
+  artifacts:
+    paths:
+      - consoleApp/main
+    expire_in: 1 hour
+  needs:
+    - console-module-build-job
+    - linter-console-job
+   
+
+research-job:   
+  stage: research  
+  script:
+    - cd backend 
+    - go mod tidy
+    - cd research
+    - go run *.go
+  when: always
+  needs:
+   - backend-module-build-job
