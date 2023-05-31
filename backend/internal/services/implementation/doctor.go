@@ -10,26 +10,26 @@ import (
 	"github.com/charmbracelet/log"
 )
 
-type doctorServiceImplementation struct {
-	doctorRepository repository.DoctorRepository
+type DoctorServiceImplementation struct {
+	DoctorRepository repository.DoctorRepository
 	hasher           hasher.Hasher
 	logger           *log.Logger
 }
 
 func NewDoctorServiceImplementation(
-	doctorRepository repository.DoctorRepository,
+	DoctorRepository repository.DoctorRepository,
 	hasher hasher.Hasher,
 	logger *log.Logger) services.DoctorService {
 
-	return &doctorServiceImplementation{
-		doctorRepository: doctorRepository,
+	return &DoctorServiceImplementation{
+		DoctorRepository: DoctorRepository,
 		hasher:           hasher,
 		logger:           logger,
 	}
 }
 
-func (c *doctorServiceImplementation) SetRole() error {
-	err := c.doctorRepository.SetRole()
+func (c *DoctorServiceImplementation) SetRole() error {
+	err := c.DoctorRepository.SetRole()
 
 	return err
 }
@@ -45,8 +45,8 @@ func checkShedule(start uint64, end uint64) error {
 	return nil
 }
 
-func (d *doctorServiceImplementation) GetDoctorByLogin(login string) (*models.Doctor, error) {
-	doctor, err := d.doctorRepository.GetDoctorByLogin(login)
+func (d *DoctorServiceImplementation) GetDoctorByLogin(login string) (*models.Doctor, error) {
+	doctor, err := d.DoctorRepository.GetDoctorByLogin(login)
 
 	if err != nil {
 		d.logger.Warn("DOCTOR! Error in repository GetDoctorByLogin", "login", login, "error", err)
@@ -57,9 +57,9 @@ func (d *doctorServiceImplementation) GetDoctorByLogin(login string) (*models.Do
 	return doctor, nil
 }
 
-func (d *doctorServiceImplementation) Create(doctor *models.Doctor, password string) (*models.Doctor, error) {
+func (d *DoctorServiceImplementation) Create(doctor *models.Doctor, password string) (*models.Doctor, error) {
 	d.logger.Debug("DOCTOR! Start create doctor with", "login", doctor.Login)
-	_, err := d.doctorRepository.GetDoctorByLogin(doctor.Login)
+	_, err := d.DoctorRepository.GetDoctorByLogin(doctor.Login)
 
 	if err != nil && err != repoErrors.EntityDoesNotExists {
 		d.logger.Warn("DOCTOR! Error in repository method GetDoctorByLogin", "err", err)
@@ -83,7 +83,7 @@ func (d *doctorServiceImplementation) Create(doctor *models.Doctor, password str
 		return nil, err
 	}
 
-	err = d.doctorRepository.Create(doctor)
+	err = d.DoctorRepository.Create(doctor)
 	if err != nil {
 		d.logger.Warn("DOCTOR! Error in repository method Create", "doctor", doctor.Login, "error", err)
 		return nil, err
@@ -98,10 +98,10 @@ func (d *doctorServiceImplementation) Create(doctor *models.Doctor, password str
 	return newDoctor, nil
 }
 
-func (d *doctorServiceImplementation) Login(login, password string) (*models.Doctor, error) {
+func (d *DoctorServiceImplementation) Login(login, password string) (*models.Doctor, error) {
 	d.logger.Debug("DOCTOR! Start login with", "login", login)
 
-	tempDoctor, err := d.doctorRepository.GetDoctorByLogin(login)
+	tempDoctor, err := d.DoctorRepository.GetDoctorByLogin(login)
 	if err != nil && err == repoErrors.EntityDoesNotExists {
 		d.logger.Warn("DOCTOR! Error, doctor with this login does not exists", "login", login, "error", err)
 		return nil, serviceErrors.DoctorDoesNotExists
@@ -119,7 +119,7 @@ func (d *doctorServiceImplementation) Login(login, password string) (*models.Doc
 	return tempDoctor, nil
 }
 
-func (d *doctorServiceImplementation) UpdateShedule(id uint64, newStart uint64, newEnd uint64) error {
+func (d *DoctorServiceImplementation) UpdateShedule(id uint64, newStart uint64, newEnd uint64) error {
 	_, err := d.GetDoctorById(id)
 	if err != nil {
 		return err
@@ -133,7 +133,7 @@ func (d *doctorServiceImplementation) UpdateShedule(id uint64, newStart uint64, 
 		return err
 	}
 
-	err = d.doctorRepository.UpdateShedule(id, newStart, newEnd)
+	err = d.DoctorRepository.UpdateShedule(id, newStart, newEnd)
 	if err != nil {
 		d.logger.Warn("DOCTOR! Error in repository method UpdateShedule", "doctorId", id,
 			"new startTime", newStart, "new endTime", newEnd, "err", err)
@@ -145,8 +145,8 @@ func (d *doctorServiceImplementation) UpdateShedule(id uint64, newStart uint64, 
 	return nil
 }
 
-func (d *doctorServiceImplementation) GetAllDoctors() ([]models.Doctor, error) {
-	doctors, err := d.doctorRepository.GetAllDoctors()
+func (d *DoctorServiceImplementation) GetAllDoctors() ([]models.Doctor, error) {
+	doctors, err := d.DoctorRepository.GetAllDoctors()
 
 	if err != nil {
 		d.logger.Warn("DOCTOR! Error in repository method GetDoctorById", "err", err)
@@ -157,8 +157,8 @@ func (d *doctorServiceImplementation) GetAllDoctors() ([]models.Doctor, error) {
 	return doctors, nil
 }
 
-func (d *doctorServiceImplementation) GetDoctorById(id uint64) (*models.Doctor, error) {
-	doctor, err := d.doctorRepository.GetDoctorById(id)
+func (d *DoctorServiceImplementation) GetDoctorById(id uint64) (*models.Doctor, error) {
+	doctor, err := d.DoctorRepository.GetDoctorById(id)
 
 	if err != nil && err == repoErrors.EntityDoesNotExists {
 		d.logger.Warn("DOCTOR! Error, doctor with this id does not exists", "id", id, "error", err)

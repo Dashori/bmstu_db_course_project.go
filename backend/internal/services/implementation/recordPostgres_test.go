@@ -2,59 +2,23 @@ package servicesImplementation
 
 import (
 	"backend/internal/models"
-	"backend/internal/repository"
-	"backend/internal/repository/postgres_repo"
-	"backend/internal/services"
+	// "backend/internal/repository"
+
+	// "backend/internal/services"
 	"context"
-	"database/sql"
-	"github.com/charmbracelet/log"
+
+	// "github.com/charmbracelet/log"
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
-	"os"
+
 	"testing"
 	"time"
 )
 
-type recordServiceFieldsPostgres struct {
-	recordRepository *repository.RecordRepository
-	doctorRepository *repository.DoctorRepository
-	clientRepository *repository.ClientRepository
-	petRepository    *repository.PetRepository
-	logger           *log.Logger
-}
-
-func createRecordServiceFieldsPostgres(dbTest *sql.DB) *recordServiceFieldsPostgres {
-	fields := new(recordServiceFieldsPostgres)
-
-	repositoryFields := postgres_repo.PostgresRepositoryFields{DB: dbTest}
-
-	recordRepo := postgres_repo.CreateRecordPostgresRepository(&repositoryFields)
-	fields.recordRepository = &recordRepo
-
-	doctorRepo := postgres_repo.CreateDoctorPostgresRepository(&repositoryFields)
-	fields.doctorRepository = &doctorRepo
-
-	clientRepo := postgres_repo.CreateClientPostgresRepository(&repositoryFields)
-	fields.clientRepository = &clientRepo
-
-	petRepo := postgres_repo.CreatePetPostgresRepository(&repositoryFields)
-	fields.petRepository = &petRepo
-
-	fields.logger = log.New(os.Stderr)
-	fields.logger.SetLevel(log.FatalLevel)
-
-	return fields
-}
-
-func createRecordServicePostgres(fields *recordServiceFieldsPostgres) services.RecordService {
-	return NewRecordServiceImplementation(*fields.recordRepository, *fields.doctorRepository,
-		*fields.clientRepository, *fields.petRepository, fields.logger)
-}
-
 var testRecordCreatePostgresSuccess = []struct {
 	TestName        string
 	InputData       struct{}
-	Prepare         func(fields *recordServiceFieldsPostgres)
+	Prepare         func(fields *RecordServiceFieldsPostgres)
 	CheckOutput     func(t *testing.T, err error)
 	CheckOutputHelp func(t *testing.T, err error)
 }{
@@ -105,12 +69,12 @@ func TestRecordServiceImplementationCreatePostgres(t *testing.T) {
 	for _, tt := range testRecordCreatePostgresSuccess {
 		tt := tt
 		t.Run(tt.TestName, func(t *testing.T) {
-			fields := createRecordServiceFieldsPostgres(db)
-			records := createRecordServicePostgres(fields)
+			fields := СreateRecordServiceFieldsPostgres(db)
+			records := CreateRecordServicePostgres(fields)
 
-			clients := fields.clientRepository
-			doctors := fields.doctorRepository
-			pets := fields.petRepository
+			clients := fields.ClientRepository
+			doctors := fields.DoctorRepository
+			pets := fields.PetRepository
 
 			err := (*clients).Create(&models.Client{Login: "ChicagoTest", Password: "12345"})
 			tt.CheckOutputHelp(t, err)
@@ -153,12 +117,12 @@ func TestRecordServiceImplementationCreatePostgres(t *testing.T) {
 	for _, tt := range testRecordCreatePostgresFailure {
 		tt := tt
 		t.Run(tt.TestName, func(t *testing.T) {
-			fields := createRecordServiceFieldsPostgres(db)
-			records := createRecordServicePostgres(fields)
+			fields := СreateRecordServiceFieldsPostgres(db)
+			records := CreateRecordServicePostgres(fields)
 
-			clients := fields.clientRepository
-			doctors := fields.doctorRepository
-			pets := fields.petRepository
+			clients := fields.ClientRepository
+			doctors := fields.DoctorRepository
+			pets := fields.PetRepository
 
 			err := (*clients).Create(&models.Client{Login: "ChicagoTest", Password: "12345"})
 			tt.CheckOutputHelp(t, err)

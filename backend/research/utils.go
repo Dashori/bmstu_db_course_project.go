@@ -1,12 +1,12 @@
-package servicesImplementation
+package main
 
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 	"os"
+	"fmt"
 )
 
 const (
@@ -15,7 +15,7 @@ const (
 	DBNAME   = "postgres"
 )
 
-func SetupTestDatabase() (testcontainers.Container, *sql.DB) {
+func SetupTestDatabase(path string) (testcontainers.Container, *sql.DB) {
 	containerReq := testcontainers.ContainerRequest{
 		Image:        "postgres:latest",
 		ExposedPorts: []string{"5432/tcp"},
@@ -49,7 +49,8 @@ func SetupTestDatabase() (testcontainers.Container, *sql.DB) {
 	}
 	db.SetMaxOpenConns(10)
 
-	text, err := os.ReadFile("../../../db/postgreSQL/init.sql")
+	
+	text, err := os.ReadFile(path)
 	if err != nil {
 		return dbContainer, nil
 	}

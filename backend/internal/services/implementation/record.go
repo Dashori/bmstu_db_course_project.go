@@ -9,26 +9,26 @@ import (
 	"time"
 )
 
-type recordServiceImplementation struct {
-	recordRepository repository.RecordRepository
-	doctorRepository repository.DoctorRepository
-	clientRepository repository.ClientRepository
-	petRepository    repository.PetRepository
+type RecordServiceImplementation struct {
+	RecordRepository repository.RecordRepository
+	DoctorRepository repository.DoctorRepository
+	ClientRepository repository.ClientRepository
+	PetRepository    repository.PetRepository
 	logger           *log.Logger
 }
 
 func NewRecordServiceImplementation(
-	recordRepository repository.RecordRepository,
-	doctorRepository repository.DoctorRepository,
-	clientRepository repository.ClientRepository,
-	petRepository repository.PetRepository,
+	RecordRepository repository.RecordRepository,
+	DoctorRepository repository.DoctorRepository,
+	ClientRepository repository.ClientRepository,
+	PetRepository repository.PetRepository,
 	logger *log.Logger) services.RecordService {
 
-	return &recordServiceImplementation{
-		recordRepository: recordRepository,
-		doctorRepository: doctorRepository,
-		clientRepository: clientRepository,
-		petRepository:    petRepository,
+	return &RecordServiceImplementation{
+		RecordRepository: RecordRepository,
+		DoctorRepository: DoctorRepository,
+		ClientRepository: ClientRepository,
+		PetRepository:    PetRepository,
 		logger:           logger,
 	}
 }
@@ -110,7 +110,7 @@ func isClientPetOwner(pets []models.Pet, petId uint64) bool {
 	return clientIsPetOwner
 }
 
-func (r *recordServiceImplementation) CreateRecord(record *models.Record) error {
+func (r *RecordServiceImplementation) CreateRecord(record *models.Record) error {
 	r.logger.Debug("RECORD! Start CreateRecord with params", "client", record.ClientId, "pet", record.PetId,
 		"doctor", record.DoctorId, "DatetimeStart", record.DatetimeStart, "DatetimeEnd", record.DatetimeEnd)
 
@@ -120,7 +120,7 @@ func (r *recordServiceImplementation) CreateRecord(record *models.Record) error 
 		return serviceErrors.ErrorCreateRecordTime
 	}
 
-	pets, err := r.petRepository.GetAllByClient(record.ClientId)
+	pets, err := r.PetRepository.GetAllByClient(record.ClientId)
 	if err != nil {
 		r.logger.Warn("RECORD! Error in repository method GetAllByClient", "error", err)
 		return err
@@ -131,7 +131,7 @@ func (r *recordServiceImplementation) CreateRecord(record *models.Record) error 
 		return serviceErrors.NotClientPet
 	}
 
-	doctor, err := r.doctorRepository.GetDoctorById(record.DoctorId)
+	doctor, err := r.DoctorRepository.GetDoctorById(record.DoctorId)
 	if err != nil {
 		r.logger.Warn("RECORD! Error in repository method GetDoctorById", "error", err)
 		return serviceErrors.DoctorDoesNotExists
@@ -142,7 +142,7 @@ func (r *recordServiceImplementation) CreateRecord(record *models.Record) error 
 		return serviceErrors.ErrorDoctorTime
 	}
 
-	records, err := r.recordRepository.GetAllByDoctor(record.DoctorId)
+	records, err := r.RecordRepository.GetAllByDoctor(record.DoctorId)
 	if err != nil {
 		r.logger.Warn("RECORD! Error in repository method GetAllByDoctor", "error", err)
 		return err
@@ -153,7 +153,7 @@ func (r *recordServiceImplementation) CreateRecord(record *models.Record) error 
 		return serviceErrors.TimeIsTaken
 	}
 
-	err = r.recordRepository.Create(record)
+	err = r.RecordRepository.Create(record)
 	if err != nil {
 		r.logger.Warn("RECORD! Error in repository method Create", "error", err)
 		return err
@@ -164,14 +164,14 @@ func (r *recordServiceImplementation) CreateRecord(record *models.Record) error 
 	return nil
 }
 
-func (r *recordServiceImplementation) DeleteRecord(recordId uint64) error {
-	_, err := r.recordRepository.GetRecord(recordId)
+func (r *RecordServiceImplementation) DeleteRecord(recordId uint64) error {
+	_, err := r.RecordRepository.GetRecord(recordId)
 	if err != nil {
 		r.logger.Warn("RECORD! Error in repository method GetRecord with ", "id", recordId, "error", err)
 		return serviceErrors.RecordDoesNotExists
 	}
 
-	err = r.recordRepository.Delete(recordId)
+	err = r.RecordRepository.Delete(recordId)
 	if err != nil {
 		r.logger.Warn("RECORD! Error in repository method Delete with ", "id", recordId, "error", err)
 		return err
@@ -181,8 +181,8 @@ func (r *recordServiceImplementation) DeleteRecord(recordId uint64) error {
 	return nil
 }
 
-func (r *recordServiceImplementation) GetRecord(recordId uint64) (*models.Record, error) {
-	record, err := r.recordRepository.GetRecord(recordId)
+func (r *RecordServiceImplementation) GetRecord(recordId uint64) (*models.Record, error) {
+	record, err := r.RecordRepository.GetRecord(recordId)
 
 	if err != nil {
 		r.logger.Warn("RECORD! Error in repository method GetRecord with ", "id", recordId, "error", err)
@@ -194,32 +194,32 @@ func (r *recordServiceImplementation) GetRecord(recordId uint64) (*models.Record
 	return record, nil
 }
 
-func (r *recordServiceImplementation) GetAllRecords(doctorId uint64, clientId uint64) ([]models.Record, error) {
+func (r *RecordServiceImplementation) GetAllRecords(doctorId uint64, clientId uint64) ([]models.Record, error) {
 	var err error
 	var records []models.Record
 
 	r.logger.Debug("RECORD! Start GetAllRecords with", "clientId", clientId, "doctorId", doctorId)
 
 	if clientId == 0 && doctorId == 0 {
-		records, err = r.recordRepository.GetAllRecords()
+		records, err = r.RecordRepository.GetAllRecords()
 		if err != nil {
 			r.logger.Warn("Error in repository method GetAllRecords", "error", err)
 			return nil, err
 		}
 	} else if clientId == 0 && doctorId != 0 {
-		records, err = r.recordRepository.GetAllByDoctor(doctorId)
+		records, err = r.RecordRepository.GetAllByDoctor(doctorId)
 		if err != nil {
 			r.logger.Warn("Error in repository method GetAllByDoctor with", "doctorId", doctorId, "error", err)
 			return nil, err
 		}
 	} else if clientId != 0 && doctorId == 0 {
-		records, err = r.recordRepository.GetAllByClient(clientId)
+		records, err = r.RecordRepository.GetAllByClient(clientId)
 		if err != nil {
 			r.logger.Warn("Error in repository method GetAllByClient with", "clientId", clientId, "error", err)
 			return nil, err
 		}
 	} else {
-		records, err = r.recordRepository.GetAllRecordFilter(doctorId, clientId)
+		records, err = r.RecordRepository.GetAllRecordFilter(doctorId, clientId)
 		if err != nil {
 			r.logger.Warn("Error in repository method GetAllRecordFilter with", "clientId", clientId, "doctorId", doctorId,
 				"error", err)
@@ -230,4 +230,82 @@ func (r *recordServiceImplementation) GetAllRecords(doctorId uint64, clientId ui
 	r.logger.Info("RECORD! Success GetAllRecords with", "clientId", clientId, "doctorId", doctorId)
 
 	return records, err
+}
+
+func (r *RecordServiceImplementation) CreateRecordResearch(record *models.Record) (error, time.Duration) {
+
+	if !CheckTime(record) { // == false
+
+		return serviceErrors.ErrorCreateRecordTime, 0
+	}
+
+	pets, err := r.PetRepository.GetAllByClient(record.ClientId)
+	if err != nil {
+		return err, 0
+	}
+
+	if !isClientPetOwner(pets, record.PetId) { //== false
+		return serviceErrors.NotClientPet, 0
+	}
+
+	start := time.Now()
+
+	doctor, err := r.DoctorRepository.GetDoctorById(record.DoctorId)
+	if err != nil {
+		return serviceErrors.DoctorDoesNotExists, 0
+	}
+
+	if !CheckDoctorTime(doctor, record) { //== false
+		return serviceErrors.ErrorDoctorTime, 0
+	}
+
+	records, err := r.RecordRepository.GetAllByDoctor(record.DoctorId)
+	if err != nil {
+		return err, 0
+	}
+
+	if !CheckOtherRecords(records, record) { //== false
+		return serviceErrors.TimeIsTaken, 0
+	}
+
+	err = r.RecordRepository.Create(record)
+
+	duration := time.Since(start)
+
+	if err != nil {
+		return err, 0
+	}
+
+	return nil, duration
+}
+
+
+
+func (r *RecordServiceImplementation) CreateRecordResearchTrigger(record *models.Record) (error, time.Duration) {
+
+	if !CheckTime(record) { // == false
+
+		return serviceErrors.ErrorCreateRecordTime, 0
+	}
+
+	pets, err := r.PetRepository.GetAllByClient(record.ClientId)
+	if err != nil {
+		return err, 0
+	}
+
+	if !isClientPetOwner(pets, record.PetId) { //== false
+		return serviceErrors.NotClientPet, 0
+	}
+
+	start := time.Now()
+
+	err = r.RecordRepository.Create(record)
+
+	duration := time.Since(start)
+
+	if err != nil {
+		return err, 0
+	}
+
+	return nil, duration
 }

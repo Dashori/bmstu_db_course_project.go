@@ -9,34 +9,34 @@ import (
 	"github.com/charmbracelet/log"
 )
 
-type petServiceImplementation struct {
-	petRepository    repository.PetRepository
-	clientRepository repository.ClientRepository
+type PetServiceImplementation struct {
+	PetRepository    repository.PetRepository
+	ClientRepository repository.ClientRepository
 	logger           *log.Logger
 }
 
 func NewPetServiceImplementation(
-	petRepository repository.PetRepository,
-	clientRepository repository.ClientRepository,
+	PetRepository repository.PetRepository,
+	ClientRepository repository.ClientRepository,
 	logger *log.Logger) services.PetService {
 
-	return &petServiceImplementation{
-		petRepository:    petRepository,
-		clientRepository: clientRepository,
+	return &PetServiceImplementation{
+		PetRepository:    PetRepository,
+		ClientRepository: ClientRepository,
 		logger:           logger,
 	}
 }
 
-func (p *petServiceImplementation) Create(pet *models.Pet, login string) error { // login client
+func (p *PetServiceImplementation) Create(pet *models.Pet, login string) error { // login client
 	p.logger.Debug("PET! Start create new pet", "client login", login, "petName", pet.Name)
 
-	client, err := p.clientRepository.GetClientByLogin(login)
+	client, err := p.ClientRepository.GetClientByLogin(login)
 	if err != nil {
 		p.logger.Warn("PET! Error with client when create new pet", "client login", login, "petName", pet.Name, "err", err)
 		return serviceErrors.ClientDoesNotExists
 	}
 
-	pets, err := p.petRepository.GetAllByClient(client.ClientId)
+	pets, err := p.PetRepository.GetAllByClient(client.ClientId)
 	if err != nil && err != repoErrors.EntityDoesNotExists {
 		p.logger.Warn("PET! Error in repository method GetAllByClient", "client login", login, "err", err)
 		return err
@@ -54,7 +54,7 @@ func (p *petServiceImplementation) Create(pet *models.Pet, login string) error {
 	}
 
 	pet.ClientId = client.ClientId
-	err = p.petRepository.Create(pet)
+	err = p.PetRepository.Create(pet)
 	if err != nil {
 		p.logger.Warn("PET! Error in repository method Create", "client login", login, "petName", pet.Name, "petName", pet.Name, "err", err)
 	}
@@ -63,8 +63,8 @@ func (p *petServiceImplementation) Create(pet *models.Pet, login string) error {
 	return nil
 }
 
-func (p *petServiceImplementation) Delete(petId uint64, clientId uint64) error {
-	pet, err := p.petRepository.GetPet(petId)
+func (p *PetServiceImplementation) Delete(petId uint64, clientId uint64) error {
+	pet, err := p.PetRepository.GetPet(petId)
 
 	if err != nil && err == repoErrors.EntityDoesNotExists {
 		p.logger.Warn("PET! Pet does not exists", "petId", petId)
@@ -79,7 +79,7 @@ func (p *petServiceImplementation) Delete(petId uint64, clientId uint64) error {
 		return serviceErrors.NotClientPet
 	}
 
-	err = p.petRepository.Delete(petId)
+	err = p.PetRepository.Delete(petId)
 
 	if err != nil {
 		p.logger.Warn("PET! Error in repository method delete", "cliendId", clientId, "petId", petId, "petName", pet.Name, "err", err)
@@ -90,8 +90,8 @@ func (p *petServiceImplementation) Delete(petId uint64, clientId uint64) error {
 	return nil
 }
 
-func (p *petServiceImplementation) GetPet(petId uint64) (*models.Pet, error) {
-	pet, err := p.petRepository.GetPet(petId)
+func (p *PetServiceImplementation) GetPet(petId uint64) (*models.Pet, error) {
+	pet, err := p.PetRepository.GetPet(petId)
 
 	if err != nil && err == repoErrors.EntityDoesNotExists {
 		p.logger.Warn("PET! Pet does not exists", "petId", petId)
@@ -105,8 +105,8 @@ func (p *petServiceImplementation) GetPet(petId uint64) (*models.Pet, error) {
 	return pet, nil
 }
 
-func (p *petServiceImplementation) GetAllByClient(id uint64) ([]models.Pet, error) {
-	pets, err := p.petRepository.GetAllByClient(id)
+func (p *PetServiceImplementation) GetAllByClient(id uint64) ([]models.Pet, error) {
+	pets, err := p.PetRepository.GetAllByClient(id)
 
 	if err != nil {
 		p.logger.Warn("PET! Error in repository method GetAllByClient", "id", id, "err", err)

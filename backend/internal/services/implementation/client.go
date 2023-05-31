@@ -10,33 +10,33 @@ import (
 	"github.com/charmbracelet/log"
 )
 
-type clientServiceImplementation struct {
-	clientRepository repository.ClientRepository
+type ClientServiceImplementation struct {
+	ClientRepository repository.ClientRepository
 	hasher           hasher.Hasher
 	logger           *log.Logger
 }
 
 func NewClientServiceImplementation(
-	clientRepository repository.ClientRepository,
+	ClientRepository repository.ClientRepository,
 	hasher hasher.Hasher,
 	logger *log.Logger,
 ) services.ClientService {
 
-	return &clientServiceImplementation{
-		clientRepository: clientRepository,
+	return &ClientServiceImplementation{
+		ClientRepository: ClientRepository,
 		hasher:           hasher,
 		logger:           logger,
 	}
 }
 
-func (c *clientServiceImplementation) SetRole() error {
-	err := c.clientRepository.SetRole()
+func (c *ClientServiceImplementation) SetRole() error {
+	err := c.ClientRepository.SetRole()
 
 	return err
 }
 
-func (c *clientServiceImplementation) GetClientByLogin(login string) (*models.Client, error) {
-	client, err := c.clientRepository.GetClientByLogin(login)
+func (c *ClientServiceImplementation) GetClientByLogin(login string) (*models.Client, error) {
+	client, err := c.ClientRepository.GetClientByLogin(login)
 
 	if err != nil {
 		c.logger.Warn("CLIENT! Error in repository GetClientByLogin", "login", login, "error", err)
@@ -47,10 +47,10 @@ func (c *clientServiceImplementation) GetClientByLogin(login string) (*models.Cl
 	return client, nil
 }
 
-func (c *clientServiceImplementation) Create(client *models.Client, password string) (*models.Client, error) {
+func (c *ClientServiceImplementation) Create(client *models.Client, password string) (*models.Client, error) {
 	c.logger.Debug("CLIENT! Start create client with", "login", client.Login)
 
-	_, err := c.clientRepository.GetClientByLogin(client.Login)
+	_, err := c.ClientRepository.GetClientByLogin(client.Login)
 
 	if err != nil && err != repoErrors.EntityDoesNotExists {
 		c.logger.Warn("CLIENT! Error in repository GetClientByLogin", "login", client.Login, "error", err)
@@ -67,7 +67,7 @@ func (c *clientServiceImplementation) Create(client *models.Client, password str
 	}
 	client.Password = string(passwordHash)
 
-	err = c.clientRepository.Create(client)
+	err = c.ClientRepository.Create(client)
 	if err != nil {
 		c.logger.Warn("CLIENT! Error in repository Create", "login", client.Login, "error", err)
 		return nil, err
@@ -83,9 +83,9 @@ func (c *clientServiceImplementation) Create(client *models.Client, password str
 	return newClient, nil
 }
 
-func (c *clientServiceImplementation) Login(login, password string) (*models.Client, error) {
+func (c *ClientServiceImplementation) Login(login, password string) (*models.Client, error) {
 	c.logger.Debug("CLIENT! Start login with", "login", login)
-	tempClient, err := c.clientRepository.GetClientByLogin(login)
+	tempClient, err := c.ClientRepository.GetClientByLogin(login)
 
 	if err != nil && err == repoErrors.EntityDoesNotExists {
 		c.logger.Warn("CLIENT! Error, client with this login does not exists", "login", login, "error", err)
@@ -104,8 +104,8 @@ func (c *clientServiceImplementation) Login(login, password string) (*models.Cli
 	return tempClient, nil
 }
 
-func (c *clientServiceImplementation) GetClientById(id uint64) (*models.Client, error) {
-	client, err := c.clientRepository.GetClientById(id)
+func (c *ClientServiceImplementation) GetClientById(id uint64) (*models.Client, error) {
+	client, err := c.ClientRepository.GetClientById(id)
 
 	if err != nil {
 		c.logger.Warn("CLIENT! Error in repository method GetClientById", "id", id, "error", err)
