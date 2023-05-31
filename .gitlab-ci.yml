@@ -163,6 +163,10 @@ research-job:
     - go mod tidy
     - cd research
     - go run *.go
+  artifacts:
+    paths:
+      - backend/research/result.txt
+    expire_in: 4 hour
   when: always
   needs:
    - backend-module-build-job

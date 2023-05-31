@@ -49,7 +49,6 @@ func SetupTestDatabase(path string) (testcontainers.Container, *sql.DB) {
 	}
 	db.SetMaxOpenConns(10)
 
-	
 	text, err := os.ReadFile(path)
 	if err != nil {
 		return dbContainer, nil

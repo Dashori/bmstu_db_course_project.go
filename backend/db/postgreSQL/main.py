@@ -3,11 +3,10 @@ from faker import Faker
 import os
 fake = Faker()
 
-COUNT = 100
-DOC = 40
+COUNT = 500
+DOC = 50
 
-RECORDS = 100
-
+RECORDS = 90
 
 # doctors 
 # login
@@ -18,7 +17,7 @@ RECORDS = 100
 # os.system(r' >doctors.csv')
 # file = open('doctors.csv', 'w')
 
-file = open('100.sql', 'w')
+file = open(str(RECORDS) + '.sql', 'w')
 
 file.write("insert into doctors(login, password, start_time, end_time) values \n")
 
@@ -42,7 +41,10 @@ for i in range (0, DOC):
 
     file.write(str(end))
 
-    file.write("),\n")
+    if i != DOC - 1:
+        file.write("),\n")
+    else:
+        file.write(");\n\n")
 
 
 
@@ -66,7 +68,10 @@ for i in range (0, 15):
     file.write(specs[i])
     file.write('\'')
     
-    file.write("),\n")
+    if i != 14:
+        file.write("),\n")
+    else:
+        file.write(");\n\n")
 
 # doctors/specs
 # id_doctor
@@ -76,12 +81,15 @@ for i in range (0, 15):
 # file = open('docspecs.csv', 'w')
 file.write("insert into doctors_specializations values \n")
 
-for i in range (1, COUNT * 2):
+for i in range (1, DOC * 2):
     file.write('(')
     file.write(str(random.randint(1, 15)) + ",")
     file.write(str(random.randint(1, DOC)))
 
-    file.write("),\n")
+    if i != DOC * 2 - 1:
+        file.write("),\n")
+    else:
+        file.write(");\n\n")
 
 # clients
 # login
@@ -103,7 +111,10 @@ for i in range (1, COUNT):
     file.write(str("12345"))
     file.write('\'')
 
-    file.write("),\n")
+    if i != COUNT - 1:
+        file.write("),\n")
+    else:
+        file.write(");\n\n")
 
 # pets
 # name
@@ -120,7 +131,7 @@ types = ["cat", "dog", "snake", "hamster", "mouse", "parrot", "turtle"]
 
 file.write("insert into pets(name, type, age, health, id_client) values \n")
 
-for i in range (0, COUNT):
+for i in range (0, COUNT + 50):
     file.write('(')
     
     file.write('\'')
@@ -134,7 +145,11 @@ for i in range (0, COUNT):
     file.write(str(random.randint(1, 20)) + ",")
     file.write(str(random.randint(1, 10)) + ",")
     file.write(str(random.randint(1, COUNT - 1)))
-    file.write("),\n")
+
+    if i != COUNT + 49:
+        file.write("),\n")
+    else:
+        file.write(");\n\n")
 
 
 # records 
@@ -155,7 +170,7 @@ file.write("insert into records (id_pet, id_client, id_doctor, time_start, time_
 
 for i in range (1, RECORDS):
     file.write('(')
-    file.write(str(random.randint(1, COUNT - 1)) + ",") # pet
+    file.write(str(random.randint(1, COUNT + 50 - 1)) + ",") # pet
     file.write(str(random.randint(1, COUNT - 1)) + ",") # client
     file.write(str(random.randint(1, DOC - 1)) + ",") # doctor
 
@@ -166,7 +181,10 @@ for i in range (1, RECORDS):
 
     file.write("'2030-"  + str(month) + "-" + str(date) + " " + str(time) + ":00', ")
     file.write("'2030-"  + str(month) + "-" + str(date) + " " + str(time + 1) + ":00'")
-    
-    file.write("),\n")
+
+    if i != RECORDS - 1:
+        file.write("),\n")
+    else:
+        file.write(");\n\n")
 
 
