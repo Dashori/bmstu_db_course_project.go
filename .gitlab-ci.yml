@@ -173,6 +173,7 @@ research-job:
 
 result-research-graph:
   stage: research  
+  image: python
   before_script:
     - pip install matplotlib
   script:

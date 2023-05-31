@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-const N = 500
+const N = 200
 
 func main() {
 	step := 0
@@ -117,9 +117,11 @@ func researchCreateRecordWithTrigger(count int) (int, int, error) {
 
 	var result int64
 	var errorCount int64
+	var successCount int64
 
-	for i := 0; i < N; i++ {
-
+	// for i := 0; i < N; i++ {
+	for successCount != N{
+	
 		var doctorId = uint64(rand.Intn(30) + 1) // [0,n)
 		var month = time.Month(rand.Intn(12) + 1)
 		var day = rand.Intn(28) + 1
@@ -145,6 +147,8 @@ func researchCreateRecordWithTrigger(count int) (int, int, error) {
 
 		if err != nil {
 			errorCount += 1
+		} else {
+			successCount += 1
 		}
 
 		result += duration.Nanoseconds()
@@ -189,8 +193,11 @@ func researchCreateRecordWithoutTrigger(count int) (int, int, error) {
 	}
 	var result int64
 	var errorCount int64
+	var successCount int64
 
-	for i := 0; i < N; i++ {
+	for successCount != N {
+
+	// for i := 0; i < N; i++ {
 
 		var doctorId = uint64(rand.Intn(30) + 1)
 		var month = time.Month(rand.Intn(12) + 1)
@@ -217,6 +224,8 @@ func researchCreateRecordWithoutTrigger(count int) (int, int, error) {
 
 		if err != nil {
 			errorCount += 1
+		} else {
+			successCount++
 		}
 
 		result += duration.Nanoseconds()

@@ -23,10 +23,12 @@ while True:
     errorApp.append(numbers[4])
 
 for i in range(len(timeTr)):
-    timeTr[i] = timeTr[i] / (500 - errorTr[i])
+    # timeTr[i] = timeTr[i] / (500 - errorTr[i])
+    timeTr[i] = timeTr[i] / 200
     
 for i in range(len(timeApp)):
-    timeApp[i] = timeApp[i] / (500 - errorApp[i])
+    # timeApp[i] = timeApp[i] / (500 - errorApp[i])
+    timeApp[i] = timeApp[i] / 200
 
 
 plot.ylabel("Время(в наносекундах)")
