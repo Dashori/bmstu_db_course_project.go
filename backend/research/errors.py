@@ -24,20 +24,20 @@ while True:
 
 for i in range(len(timeTr)):
     # timeTr[i] = timeTr[i] / (500 - errorTr[i])
-    timeTr[i] = (timeTr[i] / 500) / 1000000
+    timeTr[i] = (timeTr[i] / 200) / 1000000
     
 for i in range(len(timeApp)):
     # timeApp[i] = timeApp[i] / (500 - errorApp[i])
-    timeApp[i] = (timeApp[i] / 500) / 1000000
+    timeApp[i] = (timeApp[i] / 200) / 1000000
 
 
-plot.ylabel("Время, мс")
+plot.ylabel("Количество ошибок")
 plot.xlabel("Количество записей в таблице приемов")
 plot.grid(True)
 
-plot.plot(size, timeTr, color = "darkmagenta", label='БД')
-plot.plot(size, timeApp, color = "gold", label='Приложение')
+plot.plot(size, errorTr, color = "lightseagreen", label='БД')
+plot.plot(size, errorApp, color = "lightsalmon", label='Приложение')
 plot.legend(["БД", "Приложение"])
 # plot.legend(loc='lower right')
 
-plot.savefig("resultGraph.png")
+plot.savefig("resultError.png")

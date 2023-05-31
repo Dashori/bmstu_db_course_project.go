@@ -179,9 +179,11 @@ result-research-graph:
   script:
     - cd backend/research
     - python3 main.py
+    - python3 errors.py
   artifacts:
     paths:
       - backend/research/resultGraph.png
+      - backend/research/resultError.png
     expire_in: 4 hour
   when: always
   needs:
