@@ -170,3 +170,19 @@ research-job:
   when: always
   needs:
    - backend-module-build-job
+
+result-research-graph:
+  stage: research  
+  before_script:
+    - pip install matplotlib
+  script:
+    - cd backend/research
+    - python3 main.py
+  artifacts:
+    paths:
+      - backend/research/resultGraph.png
+    expire_in: 4 hour
+  when: always
+  needs:
+   - research-job
+

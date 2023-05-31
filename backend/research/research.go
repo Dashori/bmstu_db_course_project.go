@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-const N = 100
+const N = 500
 
 func main() {
 	step := 0
