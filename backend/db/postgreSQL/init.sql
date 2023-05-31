@@ -56,6 +56,7 @@ create table doctors_specializations
 (
 	id_spec int references specializations(id_spec) on delete cascade, 
 	id_doctor int references doctors(id_doctor) on delete cascade,
+	primary key (id_spec, id_doctor)
 );
 
 
@@ -86,7 +87,7 @@ grant select, insert on records to doctor;
 
 create role administrator login superuser;
 
-drop function check_record() cascade;
+
 create or replace function check_record()
 returns trigger as $$
 declare
