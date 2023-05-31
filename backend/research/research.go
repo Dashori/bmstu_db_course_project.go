@@ -7,9 +7,13 @@ import (
 	"fmt"
 	"github.com/testcontainers/testcontainers-go"
 	"time"
+	"os"
+	"math/rand"
 )
 
-const N = 20
+const REPEAT = 20
+const N_start = 10
+const N_end = 10
 
 func main() {
 
@@ -42,7 +46,7 @@ func researchCreateRecordWithTrigger() error {
 	records := servicesImplementation.CreateRecordServicePostgres(fields)
 
 	clients := fields.ClientRepository
-	doctors := fields.DoctorRepository
+	// doctors := fields.DoctorRepository
 	pets := fields.PetRepository
 
 	// это с триггером
@@ -56,54 +60,60 @@ func researchCreateRecordWithTrigger() error {
 		return err
 	}
 
-	err = (*doctors).Create(&models.Doctor{Login: "ChicagoTest", Password: "12345", StartTime: 10, EndTime: 23})
-	if err != nil {
-		return err
-	}
-
-	doctor, err := (*doctors).GetDoctorByLogin("ChicagoTest")
-	if err != nil {
-		return err
-	}
 
 	var result int64
 
-	for i := 0; i < N; i++ {
+	// for i := N_start; i <= N_end; i+= 10 {
 
-		err = (*pets).Create(&models.Pet{Name: "Havrosha", Type: "cat", Age: 1, Health: 10, ClientId: client.ClientId})
+		doctorId := uint64(rand.Intn(10))
+
+			
+		text, err := os.ReadFile("../db/postgreSQL/10.sql")
 		if err != nil {
 			return err
 		}
 
-		// трюк чтоб узнать id питомца Havrosha
-		clientPets, err := (*pets).GetAllByClient(client.ClientId)
-		if err != nil {
+		if _, err := db.Exec(string(text)); err != nil {
 			return err
 		}
 
-		petId := clientPets[0].PetId
+		for i := 0; i < REPEAT; i++ {
 
-		err, duration := records.CreateRecordResearchTrigger(&models.Record{
-			PetId: petId, ClientId: client.ClientId, DoctorId: doctor.DoctorId,
-			DatetimeStart: time.Date(2024, 7, 7, 15, 00, 00, 00, time.UTC),
-			DatetimeEnd:   time.Date(2024, 7, 7, 16, 00, 00, 00, time.UTC)})
-	
-		if err != nil {
-			return err
+			err = (*pets).Create(&models.Pet{Name: "Havrosha", Type: "cat", Age: 1, Health: 10, ClientId: client.ClientId})
+			if err != nil {
+				return err
+			}
+
+			// трюк чтоб узнать id питомца Havrosha
+			clientPets, err := (*pets).GetAllByClient(client.ClientId)
+			if err != nil {
+				return err
+			}
+
+			petId := clientPets[0].PetId
+
+			err, duration := records.CreateRecordResearchTrigger(&models.Record{
+				PetId: petId, ClientId: client.ClientId, DoctorId: doctorId,
+				DatetimeStart: time.Date(2024, 7, 7, 15, 00, 00, 00, time.UTC),
+				DatetimeEnd:   time.Date(2024, 7, 7, 16, 00, 00, 00, time.UTC)})
+		
+			if err != nil {
+				return err
+			}
+
+			result += duration.Nanoseconds()
+			fmt.Println("время!!!!! ", duration.Nanoseconds())
+
+			err = (*pets).Delete(petId) // при удалении pet удалится и запись в records
+
+			if err != nil {
+				return err
+			}
 		}
-
-		result += duration.Nanoseconds()
-		fmt.Println("время!!!!! ", duration.Nanoseconds())
-
-		err = (*pets).Delete(petId) // при удалении pet удалится и запись в records
-
-		if err != nil {
-			return err
-		}
-	}
+	// }
 
 	// fmt.Println("время!!!!! ", result.Nanoseconds())
-	fmt.Println("итог время!!!!! ", result/N)
+	fmt.Println("итог время!!!!! ", result/REPEAT)
 	return err
 }
 
@@ -118,11 +128,15 @@ func researchCreateRecordWithoutTrigger() error {
 		}
 	}(dbContainer, context.Background())
 
+	if db == nil {
+		return nil
+	}
+
 	fields := servicesImplementation.СreateRecordServiceFieldsPostgres(db)
 	records := servicesImplementation.CreateRecordServicePostgres(fields)
 
 	clients := fields.ClientRepository
-	doctors := fields.DoctorRepository
+	// doctors := fields.DoctorRepository
 	pets := fields.PetRepository
 
 	// это с триггером
@@ -136,19 +150,21 @@ func researchCreateRecordWithoutTrigger() error {
 		return err
 	}
 
-	err = (*doctors).Create(&models.Doctor{Login: "ChicagoTest", Password: "12345", StartTime: 10, EndTime: 23})
-	if err != nil {
-		return err
-	}
-
-	doctor, err := (*doctors).GetDoctorByLogin("ChicagoTest")
-	if err != nil {
-		return err
-	}
+	doctorId := uint64(rand.Intn(10))
 
 	var result int64
+	
+				
+	text, err := os.ReadFile("../db/postgreSQL/10.sql")
+	if err != nil {
+		return err
+	}
 
-	for i := 0; i < N; i++ {
+	if _, err := db.Exec(string(text)); err != nil {
+		return err
+	}
+
+	for i := 0; i < REPEAT; i++ {
 
 		err = (*pets).Create(&models.Pet{Name: "Havrosha", Type: "cat", Age: 1, Health: 10, ClientId: client.ClientId})
 		if err != nil {
@@ -164,7 +180,7 @@ func researchCreateRecordWithoutTrigger() error {
 		petId := clientPets[0].PetId
 
 		err, duration := records.CreateRecordResearch(&models.Record{
-			PetId: petId, ClientId: client.ClientId, DoctorId: doctor.DoctorId,
+			PetId: petId, ClientId: client.ClientId, DoctorId: doctorId,
 			DatetimeStart: time.Date(2024, 7, 7, 15, 00, 00, 00, time.UTC),
 			DatetimeEnd:   time.Date(2024, 7, 7, 16, 00, 00, 00, time.UTC)})
 	
@@ -182,6 +198,6 @@ func researchCreateRecordWithoutTrigger() error {
 		}
 	}
 
-	fmt.Println("итог время!!!!! ", result/N)
+	fmt.Println("итог время!!!!! ", result/REPEAT)
 	return err
 }

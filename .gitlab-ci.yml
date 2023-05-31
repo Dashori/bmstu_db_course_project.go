@@ -7,6 +7,9 @@ variables:
 
 services:
   - docker:dind
+volumes:
+   - ./data:/var/lib/postgresql/data
+   - ./init://docker-entrypoint-initdb.d
 
 stages:
   - pre
@@ -111,12 +114,10 @@ bl-db-test-job:
     - cd backend 
     - go mod tidy
     - cd internal/services/implementation
-    - go test recordPostgres_test.go record.go record_test.go setup.go -v -cover -coverprofile=recordDB.out
-    - go test petPostgres_test.go pet.go pet_test.go setup.go -v -cover -coverprofile=petDB.out
+    - go test  petPostgres_test.go pet.go pet_test.go recordPostgres_test.go record.go record_test.go setup.go -v -cover -coverprofile=DLDB.out
   artifacts:
     paths:
-      - backend/internal/services/implementation/recordDB.out
-      - backend/internal/services/implementation/petDB.out
+      - backend/internal/services/implementation/recordDLDB.out
     expire_in: 1 hour
   needs:
     - backend-module-build-job
