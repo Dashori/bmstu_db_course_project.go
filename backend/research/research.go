@@ -7,9 +7,11 @@ import (
 	"fmt"
 	"github.com/testcontainers/testcontainers-go"
 	"time"
+	"os"
+	"math/rand"
 )
 
-const N = 20
+const N = 1000
 
 func main() {
 
@@ -30,7 +32,7 @@ func main() {
 
 func researchCreateRecordWithTrigger() error {
 
-	dbContainer, db := SetupTestDatabase("../db/postgreSQL/init.sql")
+	dbContainer, db := SetupTestDatabase("../db/postgreSQL/research.sql")
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
 		err := dbContainer.Terminate(ctx)
 		if err != nil {
@@ -38,15 +40,34 @@ func researchCreateRecordWithTrigger() error {
 		}
 	}(dbContainer, context.Background())
 
+	text, err := os.ReadFile("../db/postgreSQL/100.sql")
+	if err != nil {
+		return err
+	}
+
+	if _, err := db.Exec(string(text)); err != nil {
+		return err
+	}
+
+	text, err = os.ReadFile("../db/postgreSQL/tr.sql")
+	if err != nil {
+		return err
+	}
+
+	if _, err := db.Exec(string(text)); err != nil {
+		return err
+	}
+
+
 	fields := servicesImplementation.СreateRecordServiceFieldsPostgres(db)
 	records := servicesImplementation.CreateRecordServicePostgres(fields)
 
 	clients := fields.ClientRepository
-	doctors := fields.DoctorRepository
+	// doctors := fields.DoctorRepository
 	pets := fields.PetRepository
 
 	// это с триггером
-	err := (*clients).Create(&models.Client{Login: "ChicagoTest", Password: "12345"})
+	err = (*clients).Create(&models.Client{Login: "ChicagoTest", Password: "12345"})
 	if err != nil {
 		return err
 	}
@@ -56,15 +77,21 @@ func researchCreateRecordWithTrigger() error {
 		return err
 	}
 
-	err = (*doctors).Create(&models.Doctor{Login: "ChicagoTest", Password: "12345", StartTime: 10, EndTime: 23})
-	if err != nil {
-		return err
-	}
+	// [0,n)
+	var doctorId = uint64(rand.Intn(30) + 1)
+	var month = time.Month(rand.Intn(12) + 1)
+	var day = rand.Intn(28) + 1
+	var hour = rand.Intn(22)
 
-	doctor, err := (*doctors).GetDoctorByLogin("ChicagoTest")
-	if err != nil {
-		return err
-	}
+	// err = (*doctors).Create(&models.Doctor{Login: "ChicagoTest", Password: "12345", StartTime: 10, EndTime: 23})
+	// if err != nil {
+	// 	return err
+	// }
+
+	// doctor, err := (*doctors).GetDoctorByLogin("ChicagoTest")
+	// if err != nil {
+	// 	return err
+	// }
 
 	var result int64
 
@@ -84,9 +111,9 @@ func researchCreateRecordWithTrigger() error {
 		petId := clientPets[0].PetId
 
 		err, duration := records.CreateRecordResearchTrigger(&models.Record{
-			PetId: petId, ClientId: client.ClientId, DoctorId: doctor.DoctorId,
-			DatetimeStart: time.Date(2024, 7, 7, 15, 00, 00, 00, time.UTC),
-			DatetimeEnd:   time.Date(2024, 7, 7, 16, 00, 00, 00, time.UTC)})
+			PetId: petId, ClientId: client.ClientId, DoctorId: doctorId,
+			DatetimeStart: time.Date(2024, month, day, hour, 00, 00, 00, time.UTC),
+			DatetimeEnd:   time.Date(2024, month, day, hour + 1, 00, 00, 00, time.UTC)})
 	
 		if err != nil {
 			return err
@@ -118,15 +145,25 @@ func researchCreateRecordWithoutTrigger() error {
 		}
 	}(dbContainer, context.Background())
 
+	text, err := os.ReadFile("../db/postgreSQL/100.sql")
+	if err != nil {
+		return err
+	}
+
+	if _, err := db.Exec(string(text)); err != nil {
+		return err
+	}
+
+
 	fields := servicesImplementation.СreateRecordServiceFieldsPostgres(db)
 	records := servicesImplementation.CreateRecordServicePostgres(fields)
 
 	clients := fields.ClientRepository
-	doctors := fields.DoctorRepository
+	// doctors := fields.DoctorRepository
 	pets := fields.PetRepository
 
 	// это с триггером
-	err := (*clients).Create(&models.Client{Login: "ChicagoTest", Password: "12345"})
+	err = (*clients).Create(&models.Client{Login: "ChicagoTest", Password: "12345"})
 	if err != nil {
 		return err
 	}
@@ -136,15 +173,21 @@ func researchCreateRecordWithoutTrigger() error {
 		return err
 	}
 
-	err = (*doctors).Create(&models.Doctor{Login: "ChicagoTest", Password: "12345", StartTime: 10, EndTime: 23})
-	if err != nil {
-		return err
-	}
+	// err = (*doctors).Create(&models.Doctor{Login: "ChicagoTest", Password: "12345", StartTime: 10, EndTime: 23})
+	// if err != nil {
+	// 	return err
+	// }
 
-	doctor, err := (*doctors).GetDoctorByLogin("ChicagoTest")
-	if err != nil {
-		return err
-	}
+	// doctor, err := (*doctors).GetDoctorByLogin("ChicagoTest")
+	// if err != nil {
+	// 	return err
+	// }
+
+	var doctorId = uint64(rand.Intn(30) + 1)
+	var month = time.Month(rand.Intn(12) + 1)
+	var day = rand.Intn(28) + 1
+	var hour = rand.Intn(22)
+
 
 	var result int64
 
@@ -163,10 +206,10 @@ func researchCreateRecordWithoutTrigger() error {
 
 		petId := clientPets[0].PetId
 
-		err, duration := records.CreateRecordResearch(&models.Record{
-			PetId: petId, ClientId: client.ClientId, DoctorId: doctor.DoctorId,
-			DatetimeStart: time.Date(2024, 7, 7, 15, 00, 00, 00, time.UTC),
-			DatetimeEnd:   time.Date(2024, 7, 7, 16, 00, 00, 00, time.UTC)})
+		err, duration := records.CreateRecordResearchTrigger(&models.Record{
+			PetId: petId, ClientId: client.ClientId, DoctorId: doctorId,
+			DatetimeStart: time.Date(2024, month, day, hour, 00, 00, 00, time.UTC),
+			DatetimeEnd:   time.Date(2024, month, day, hour + 1, 00, 00, 00, time.UTC)})
 	
 		if err != nil {
 			return err

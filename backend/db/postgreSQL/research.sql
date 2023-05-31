@@ -55,8 +55,7 @@ drop table if exists doctors_specializations cascade;
 create table doctors_specializations
 (
 	id_spec int references specializations(id_spec) on delete cascade, 
-	id_doctor int references doctors(id_doctor) on delete cascade,
-	primary key (id_spec, id_doctor)
+	id_doctor int references doctors(id_doctor) on delete cascade
 );
 
 
