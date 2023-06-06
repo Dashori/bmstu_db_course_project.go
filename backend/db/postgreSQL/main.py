@@ -6,7 +6,7 @@ fake = Faker()
 COUNT = 500
 DOC = 50
 
-RECORDS = 90
+RECORDS = 9000
 
 # doctors 
 # login

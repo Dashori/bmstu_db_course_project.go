@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-const N = 500
+const N = 1
 
 func main() {
 	step := 0
@@ -24,7 +24,7 @@ func main() {
 		return
 	}
 
-	for i := 10; i <= 1000; i += step {
+	for i := 10; i <= 10000; i += step {
 		fmt.Println("Records count: ", i)
 
 		resultTimeTr, errorCountTr, err := researchCreateRecordWithTrigger(i)
@@ -57,6 +57,8 @@ func main() {
 			i += 10
 		} else if i == 100 {
 			step = 100
+		} else if i == 1000 {
+			step = 1000
 		}
 	}
 }
@@ -159,7 +161,7 @@ func researchCreateRecordWithTrigger(count int) (int, int, error) {
 		}
 	}
 
-	fmt.Println("итог время!!!!! ", result/(N-errorCount))
+	fmt.Println("итог время!!!!! ", result/N)
 	fmt.Println("итого ошибок!!!!", errorCount)
 	return int(result), int(errorCount), err
 }
@@ -236,7 +238,7 @@ func researchCreateRecordWithoutTrigger(count int) (int, int, error) {
 		}
 	}
 
-	fmt.Println("итог время!!!!! ", result/(N-errorCount))
+	fmt.Println("итог время!!!!! ", result/N)
 	fmt.Println("ошибок!!!!! ", errorCount)
 	return int(result), int(errorCount), err
 }

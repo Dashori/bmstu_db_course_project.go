@@ -35,9 +35,8 @@ plot.ylabel("Время, мс")
 plot.xlabel("Количество записей в таблице приемов")
 plot.grid(True)
 
-plot.plot(size, timeTr, color = "darkmagenta", label='БД')
-plot.plot(size, timeApp, color = "gold", label='Приложение')
+plot.plot(size, timeTr, color = "darkmagenta", label='БД', marker='^')
+plot.plot(size, timeApp, color = "gold", label='Приложение', marker='*')
 plot.legend(["БД", "Приложение"])
-# plot.legend(loc='lower right')
 
-plot.savefig("resultGraph.png")
+plot.savefig('resultGraph.pdf')

@@ -30,14 +30,13 @@ for i in range(len(timeApp)):
     # timeApp[i] = timeApp[i] / (500 - errorApp[i])
     timeApp[i] = (timeApp[i] / 200) / 1000000
 
-
-plot.ylabel("Количество ошибок")
+plot.ylabel("Количество генераций")
 plot.xlabel("Количество записей в таблице приемов")
 plot.grid(True)
 
-plot.plot(size, errorTr, color = "lightseagreen", label='БД')
-plot.plot(size, errorApp, color = "lightsalmon", label='Приложение')
+plot.plot(size, errorTr, color = "lightseagreen", label='БД', marker='^')
+plot.plot(size, errorApp, color = "lightsalmon", label='Приложение',  marker='*')
 plot.legend(["БД", "Приложение"])
-# plot.legend(loc='lower right')
 
-plot.savefig("resultError.png")
+plot.savefig('errors.pdf')
+

@@ -8,7 +8,7 @@ begin
     select count(*)
     into overlapping_count
     from records
-    where id_doctor = new.id_doctor and time_start = new.time_start;
+    where id_doctor = new.id_doctor;
 
     if overlapping_count > 0 then
         raise exception 
