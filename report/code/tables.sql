@@ -9,8 +9,6 @@ create table doctors
 );
 alter table doctors add constraint 
     unique_login_doctor unique (login);
-	
-
 drop table if exists clients cascade;
 create table clients
 (
@@ -20,7 +18,6 @@ create table clients
 );
 alter table clients add constraint 
     unique_login_client unique (login);
-
 drop table if exists pets cascade;
 create table pets
 (
@@ -31,7 +28,6 @@ create table pets
 	health int,
 	id_client int references clients(id_client)
 );
-
 drop table if exists records cascade;
 create table records 
 (
@@ -42,14 +38,12 @@ create table records
 	time_start timestamp,
 	time_end timestamp
 );
-
 drop table if exists specializations cascade;
 create table specializations 
 (
 	id_spec serial primary key,
 	spec_name text
 );
-
 drop table if exists doctors_specializations cascade;
 create table doctors_specializations
 (

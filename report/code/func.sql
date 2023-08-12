@@ -16,7 +16,6 @@ begin
  already exists. please choose a different time.';
     end if;
     
-
     select (extract(hour from new.time_start) >= d.start_time 
     	and extract(hour from new.time_start) <= d.end_time) 
     	and (extract(hour from new.time_end) >= d.start_time 
